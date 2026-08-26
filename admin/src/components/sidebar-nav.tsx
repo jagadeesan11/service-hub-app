@@ -28,7 +28,10 @@ const NAV_ITEMS = [
   { href: '/settings', label: 'Settings', Icon: Settings },
 ];
 
-export function SidebarNav() {
+// `onNavigate` lets the mobile drawer close itself when a link is tapped.
+// Reacting to a pathname change in an effect also works, but sets state
+// during commit and cascades an extra render.
+export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
 
   return (
@@ -39,6 +42,7 @@ export function SidebarNav() {
           <Link
             key={href}
             href={href}
+            onClick={onNavigate}
             aria-current={isActive ? 'page' : undefined}
             className={cn(
               'group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',

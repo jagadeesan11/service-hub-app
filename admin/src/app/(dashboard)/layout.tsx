@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 
+import { MobileNav } from '@/components/mobile-nav';
 import { NexoraMark } from '@/components/nexora-mark';
 import { SidebarNav } from '@/components/sidebar-nav';
 import { SignOutButton } from '@/components/sign-out-button';
@@ -18,7 +19,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-dvh bg-background">
-      <aside className="sticky top-0 flex h-dvh w-60 shrink-0 flex-col border-r border-sidebar-border bg-sidebar">
+      {/* Hidden below `md`, where MobileNav's drawer takes over. A 240px
+          sidebar on a 375px phone leaves 135px for the page itself. */}
+      <aside className="hidden border-r border-sidebar-border bg-sidebar md:sticky md:top-0 md:flex md:h-dvh md:w-60 md:shrink-0 md:flex-col">
         <div className="flex items-center gap-2.5 px-5 py-5">
           <NexoraMark className="size-7 text-foreground" />
           <div className="leading-tight">
@@ -45,8 +48,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
         </div>
       </aside>
 
-      <main className="min-w-0 flex-1">
-        <div className="mx-auto max-w-6xl px-8 py-8">{children}</div>
+      <main className="flex min-w-0 flex-1 flex-col">
+        <MobileNav email={user.email} />
+        <div className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 md:px-8 md:py-8">{children}</div>
       </main>
     </div>
   );

@@ -95,11 +95,11 @@ export function BookingsTable({
           <TableRow>
             <TableHead className="w-8" />
             <TableHead>Service</TableHead>
-            <TableHead>Booked by</TableHead>
-            <TableHead>Scheduled</TableHead>
+            <TableHead className="hidden md:table-cell">Booked by</TableHead>
+            <TableHead className="hidden md:table-cell">Scheduled</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Technician</TableHead>
-            <TableHead className="text-right">Price</TableHead>
+            <TableHead className="hidden text-right md:table-cell">Price</TableHead>
             <TableHead className="w-px text-right">Remove</TableHead>
           </TableRow>
         </TableHeader>
@@ -134,8 +134,21 @@ export function BookingsTable({
                       )}
                     </button>
                   </TableCell>
-                  <TableCell className="font-medium">{booking.services?.name ?? '—'}</TableCell>
-                  <TableCell>
+                  <TableCell className="font-medium">
+                    <div className="min-w-32">{booking.services?.name ?? '—'}</div>
+                    {/* On a phone the Booked by, Scheduled and Price columns
+                        are hidden — seven columns will not fit in 375px. Their
+                        content reappears here so nothing is actually lost,
+                        only re-laid-out. */}
+                    <div className="mt-1 flex flex-col gap-0.5 text-xs font-normal text-muted-foreground md:hidden">
+                      <span>{customer?.name ?? 'Unnamed customer'}</span>
+                      <span>{DATE_FORMATTER.format(new Date(booking.scheduled_at))}</span>
+                      <span className="tabular-nums">
+                        {PRICE_FORMATTER.format(booking.total_price)}
+                      </span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
                     {/* Name over phone: a dispatcher scans for the person, then
                         needs the number to call them. */}
                     <div className="flex flex-col">
@@ -152,7 +165,7 @@ export function BookingsTable({
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-muted-foreground">
+                  <TableCell className="hidden text-muted-foreground md:table-cell">
                     {DATE_FORMATTER.format(new Date(booking.scheduled_at))}
                   </TableCell>
                   <TableCell>
@@ -180,7 +193,7 @@ export function BookingsTable({
                       <span className="text-muted-foreground">{booking.technicians?.name ?? '—'}</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">
+                  <TableCell className="hidden text-right tabular-nums md:table-cell">
                     {PRICE_FORMATTER.format(booking.total_price)}
                   </TableCell>
                   {/* Its own column, away from the workflow actions: a

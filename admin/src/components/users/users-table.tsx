@@ -242,9 +242,9 @@ export function UsersTable({
             <TableRow>
               <TableHead>Name</TableHead>
               <TableHead>Signs in with</TableHead>
-              <TableHead>Contact</TableHead>
+              <TableHead className="hidden md:table-cell">Contact</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Joined</TableHead>
+              <TableHead className="hidden md:table-cell">Joined</TableHead>
               <TableHead className="w-px text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -272,7 +272,7 @@ export function UsersTable({
                         <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="hidden text-muted-foreground md:table-cell">
                       {[user.email, user.phone].filter(Boolean).join(' · ') || '—'}
                     </TableCell>
                     <TableCell>
@@ -280,7 +280,7 @@ export function UsersTable({
                         {ROLE_LABELS[user.role] ?? user.role}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell className="hidden text-muted-foreground md:table-cell">
                       {DATE.format(new Date(user.created_at))}
                     </TableCell>
                     <TableCell className="text-right">
