@@ -1,0 +1,53 @@
+import { PageHeader } from '@/components/page-header';
+import { BookingsTable } from '@/components/bookings/bookings-table';
+import { createClient } from '@/lib/supabase/server';
+import type { BookingListItem, Technician } from '@/types/database';
+
+export default async function BookingsPage() {
+  const supabase = await createClient();
+
+  const [{ data: bookings, error }, { data: technicians }, { data: addons }] = await Promise.all([
+    supabase
+      .from('bookings')
+      .select(
+        `id, scheduled_at, status, total_price, technician_id, addon_ids, created_at,
+         contact_name, contact_phone, service_address, service_city, service_postal_code,
+         needs_pickup, pickup_notes, payment_method,
+         invoices(number),
+         services(id, name, category_id, duration_minutes),
+         profiles:user_id(name, phone, email, address_line, city, postal_code),
+         technicians(id, name, phone),
+         customer_assets:asset_id(attributes)`,
+      )
+      .order('scheduled_at', { ascending: false })
+      .returns<BookingListItem[]>(),
+    supabase
+      .from('technicians')
+      .select('*')
+      .eq('status', 'active')
+      .order('name')
+      .returns<Technician[]>(),
+    // addon_ids is a uuid[] rather than a FK, so PostgREST can't embed the
+    // rows — fetch them once and resolve names client-side.
+    supabase.from('addons').select('id, name').returns<{ id: string; name: string }[]>(),
+  ]);
+
+  return (
+    <div>
+      <PageHeader
+        title="Bookings"
+        description="Assign a technician to confirmed bookings that don't have one yet."
+      />
+
+      {error ? (
+        <p className="text-sm text-destructive">Failed to load bookings: {error.message}</p>
+      ) : (
+        <BookingsTable
+          initialBookings={bookings ?? []}
+          technicians={technicians ?? []}
+          addons={addons ?? []}
+        />
+      )}
+    </div>
+  );
+}

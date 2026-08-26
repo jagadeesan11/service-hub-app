@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Moto Ceramic Terms of Service</title>
+<meta name="description" content="The agreement between you and Moto Ceramic when you book vehicle care work through the app." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" />
+<style>
+/* Light is the base palette; dark redefines only tokens. Nothing is coloured
+   solely inside a media query, so the un-stamped "system" state resolves. */
+:root {
+  --ground: #F8FAFB;
+  --surface: #FFFFFF;
+  --ink: #10161C;
+  --ink-soft: #54626E;
+  --ink-faint: #78868F;
+  --rule: #DFE5EB;
+  --rule-strong: #C9D2DA;
+  --accent: #0B6E82;
+  --accent-soft: #E2F2F6;
+  --flag: #B4531A;
+  --flag-soft: #FBF0E7;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0B0F13;
+    --surface: #151B22;
+    --ink: #E9EEF3;
+    --ink-soft: #9AA7B3;
+    --ink-faint: #7A8894;
+    --rule: #232C35;
+    --rule-strong: #33404B;
+    --accent: #3ED8E8;
+    --accent-soft: #10262C;
+    --flag: #E9945C;
+    --flag-soft: #2A1D13;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0B0F13;
+  --surface: #151B22;
+  --ink: #E9EEF3;
+  --ink-soft: #9AA7B3;
+  --ink-faint: #7A8894;
+  --rule: #232C35;
+  --rule-strong: #33404B;
+  --accent: #3ED8E8;
+  --accent-soft: #10262C;
+  --flag: #E9945C;
+  --flag-soft: #2A1D13;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: clamp(1.75rem, 4vw, 4rem) clamp(1.25rem, 4vw, 3rem) 5rem;
+}
+@media (min-width: 60rem) {
+  .shell { grid-template-columns: 15rem minmax(0, 1fr); gap: 4rem; }
+}
+
+.rail { display: none; }
+@media (min-width: 60rem) {
+  .rail {
+    display: block;
+    position: sticky;
+    top: 3rem;
+    align-self: start;
+    font-size: 0.8125rem;
+  }
+}
+.rail h2 {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 0.75rem;
+  border: 0;
+  padding: 0;
+  display: block;
+}
+.rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.rail a { color: var(--ink-soft); text-decoration: none; display: block; }
+.rail a:hover, .rail a:focus-visible { color: var(--accent); }
+.rail .num { color: var(--ink-faint); font-variant-numeric: tabular-nums; margin-right: 0.4rem; }
+
+main { min-width: 0; max-width: 44rem; }
+
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.75rem;
+}
+h1 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0 0 0.75rem;
+}
+.standfirst {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0 0 2rem;
+  max-width: 34rem;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  margin-bottom: 2.5rem;
+}
+.meta b { color: var(--ink); font-weight: 600; }
+
+/* The unfilled-field treatment. This colour is used for nothing else on the
+   page, so "still to do" is never confused with emphasis. */
+.fill {
+  background: var(--flag-soft);
+  color: var(--flag);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 0.1em 0.4em;
+  border-radius: 0.2rem;
+  border: 1px dashed var(--flag);
+}
+.notice {
+  background: var(--flag-soft);
+  border: 1px solid var(--flag);
+  border-radius: 0.5rem;
+  padding: 1rem 1.15rem;
+  margin: 0 0 2.5rem;
+  font-size: 0.9375rem;
+}
+.notice p { margin: 0 0 0.6rem; }
+.notice p:last-child { margin-bottom: 0; }
+.notice strong { color: var(--flag); }
+.notice ul { margin: 0.5rem 0 0.6rem; padding-left: 1.15rem; }
+.notice li { margin-bottom: 0.3rem; }
+
+section { margin-bottom: 2.75rem; scroll-margin-top: 2rem; }
+main h2 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.85rem;
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--accent);
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+}
+main h2 .num {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+p { margin: 0 0 0.9rem; }
+ul { margin: 0 0 0.9rem; padding-left: 1.2rem; }
+li { margin-bottom: 0.4rem; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+strong { font-weight: 600; }
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 0.2rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  margin: 0 0 1.25rem;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 34rem;
+  font-size: 0.875rem;
+}
+caption {
+  caption-side: bottom;
+  text-align: left;
+  padding: 0.7rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--rule);
+}
+th, td {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule);
+}
+thead th {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: none; }
+td:first-child { font-weight: 600; }
+
+.no-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.9rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.no-list li {
+  padding-left: 1.6rem;
+  position: relative;
+  margin: 0;
+}
+.no-list li::before {
+  content: "\2014";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+footer {
+  margin-top: 3.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="rail" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#s1"><span class="num">1</span>Who we are</a></li>
+    <li><a href="#s2"><span class="num">2</span>These terms</a></li>
+    <li><a href="#s3"><span class="num">3</span>What we do</a></li>
+    <li><a href="#s4"><span class="num">4</span>Booking</a></li>
+    <li><a href="#s5"><span class="num">5</span>Prices and payment</a></li>
+    <li><a href="#s6"><span class="num">6</span>Collection and delivery</a></li>
+    <li><a href="#s7"><span class="num">7</span>Your vehicle</a></li>
+    <li><a href="#s8"><span class="num">8</span>Carrying out the work</a></li>
+    <li><a href="#s9"><span class="num">9</span>Changing or cancelling</a></li>
+    <li><a href="#s10"><span class="num">10</span>Refunds</a></li>
+    <li><a href="#s11"><span class="num">11</span>Warranty</a></li>
+    <li><a href="#s12"><span class="num">12</span>Our liability</a></li>
+    <li><a href="#s13"><span class="num">13</span>Your responsibilities</a></li>
+    <li><a href="#s14"><span class="num">14</span>Declining or stopping work</a></li>
+    <li><a href="#s15"><span class="num">15</span>Complaints</a></li>
+    <li><a href="#s16"><span class="num">16</span>Changes to these terms</a></li>
+    <li><a href="#s17"><span class="num">17</span>Governing law</a></li>
+  </ol>
+</nav>
+
+<main>
+  <p class="eyebrow">Moto Ceramic</p>
+  <h1>Terms of Service</h1>
+  <p class="standfirst">The agreement between you and Moto Ceramic when you book vehicle care work through the app: what we will do, what we need from you, and what happens when something goes wrong.</p>
+
+  <div class="meta">
+    <span><b>Effective</b> 1 September 2026</span>
+    <span><b>Last updated</b> 24 August 2026</span>
+    <span><b>Applies to</b> Moto Ceramic mobile app (com.nexora.app)</span>
+  </div>
+
+  <section id="s1">
+    <h2><span class="num">01</span>Who we are</h2>
+    <p>Moto Ceramic is a vehicle care business operated by Vimal Kumar, at RTO office, 144, 100 Feet Rd, opp. to Bharathi Mill Road, Ambal Nagar, Ozhandai Keerapalaiyam, Pondicherry 605004, India.</p>
+    <p>Phone: <a href="tel:+919787045679">+91 97870 45679</a><br />
+    Email: <a href="mailto:jagadeesan11@gmail.com">jagadeesan11@gmail.com</a></p>
+    <p>In these terms, &ldquo;we&rdquo; and &ldquo;us&rdquo; mean Moto Ceramic, and &ldquo;you&rdquo; means the person booking the service.</p>
+  </section>
+
+  <section id="s2">
+    <h2><span class="num">02</span>These terms</h2>
+    <p>These terms apply when you book any service through the Moto Ceramic app. By confirming a booking you accept them. Please read section 7 in particular, which covers the condition of your vehicle and what you should remove from it before we collect.</p>
+    <p>Nothing in these terms removes or limits any right you have under the Consumer Protection Act, 2019, or any other law that cannot be excluded by agreement. Where a clause here conflicts with such a right, that right applies.</p>
+    <p>How we handle your personal information is covered separately in our privacy policy.</p>
+  </section>
+
+  <section id="s3">
+    <h2><span class="num">03</span>What we do</h2>
+    <p>We carry out vehicle care work including paint protection film, ceramic coating and accessory fitting. The services available, what each includes, and their prices are shown in the app and may change from time to time.</p>
+    <p>Work is carried out at our workshop, not at your address. We collect your vehicle and return it as described in section 6.</p>
+  </section>
+
+  <section id="s4">
+    <h2><span class="num">04</span>Booking your service</h2>
+    <p>When you choose a service, tell us about your vehicle, give us a collection address and contact number, and pick a slot, you are making a request &mdash; not yet a contract.</p>
+    <p>A contract forms when your booking is confirmed in the app: immediately if you choose to pay cash, or once your payment succeeds if you pay online. You will see the status change, and we will notify you.</p>
+    <p>The price shown at booking is based on the vehicle details you give us. If those details turn out to be wrong &mdash; a larger vehicle than described, for example &mdash; the price may change, and section 8 explains what happens then.</p>
+  </section>
+
+  <section id="s5">
+    <h2><span class="num">05</span>Prices and payment</h2>
+    <p>Prices are in Indian Rupees and include any applicable taxes unless stated otherwise in the app.</p>
+    <p>You may pay in one of two ways:</p>
+    <ul>
+      <li><strong>Online, when you book.</strong> Payment is handled by Razorpay. We never see or store your card, UPI or bank details.</li>
+      <li><strong>Cash, when the work is done.</strong> Your booking is confirmed straight away and payment is collected on completion, before the vehicle is returned or released.</li>
+    </ul>
+    <p>Which options are available is shown at checkout and may change.</p>
+  </section>
+
+  <section id="s6">
+    <h2><span class="num">06</span>Collection and delivery</h2>
+    <p><strong>We collect.</strong> At the slot you booked, we come to the address you gave and collect your vehicle. Someone authorised to release the vehicle must be present, with the keys.</p>
+    <p><strong>You choose how it comes back.</strong> When the work is finished we will contact you, and you can either:</p>
+    <ul>
+      <li>have us deliver the vehicle back to your address, at a time we agree with you; or</li>
+      <li>collect it yourself from our workshop during opening hours.</li>
+    </ul>
+    <p>You can tell us your preference at any point up to completion. If you have chosen cash payment, the balance is settled before the vehicle is delivered or released.</p>
+    <p>Our staff drive your vehicle during collection and delivery, and only for that purpose and by the most direct practical route.</p>
+    <p>If you have chosen to collect and the vehicle is still with us 3 days after we tell you it is ready, we may charge a storage fee of ₹500 per day, up to a maximum of the service price. We will always contact you before any storage charge starts.</p>
+  </section>
+
+  <section id="s7">
+    <h2><span class="num">07</span>Your vehicle</h2>
+    <p><strong>We record its condition at collection.</strong> Before we take the vehicle we photograph its exterior and note any existing damage, and we share that record with you. This protects both of us: it is how we tell work-related damage apart from marks that were already there. If you disagree with the record, tell us before we leave with the vehicle.</p>
+    <p><strong>Take your belongings out.</strong> Please remove all personal items, documents and valuables before collection. We are not responsible for anything left in the vehicle.</p>
+    <p><strong>Keys and fuel.</strong> Leave us only the keys we need. We return the vehicle with approximately the fuel level it had when collected; small variations from moving and testing the vehicle are normal.</p>
+    <p><strong>Existing faults.</strong> Some paint and surface conditions &mdash; earlier repairs, clear-coat failure, rust, deep scratches &mdash; affect how film and coatings bond and how the finish looks. Where we spot something like that we will tell you before starting, and section 8 explains your options.</p>
+  </section>
+
+  <section id="s8">
+    <h2><span class="num">08</span>Carrying out the work</h2>
+    <p>We will carry out the work with reasonable care and skill, using the materials described for the service you booked.</p>
+    <p>Timescales given in the app are estimates. Paintwork, coatings and adhesives are sensitive to weather and humidity, and we would rather take longer than deliver poor work. We will keep you informed if a job is running late.</p>
+    <p><strong>If the job turns out to be different from what was booked</strong> &mdash; the vehicle is larger than described, or the surface needs preparation we could not see at booking &mdash; we will stop, contact you, and tell you what it changes about the price or the timescale. We will not carry out extra chargeable work without your agreement. If you would rather not go ahead, we will return the vehicle and charge only for work already done, plus the cost of collection.</p>
+  </section>
+
+  <section id="s9">
+    <h2><span class="num">09</span>Changing or cancelling a booking</h2>
+    <p>You can cancel in the app at any time up until we begin work. Once the job has started it cannot be cancelled, because materials have been used and the surface has been prepared.</p>
+    <p>To reschedule, cancel and book a new slot, or contact us and we will move it for you.</p>
+    <p><strong>Cancelling more than 24 hours before your slot</strong> costs nothing, and any payment you have made is refunded in full.</p>
+    <p><strong>Cancelling within 24 hours of your slot</strong>, or not being available when we arrive to collect, means we have held a slot and travelled for nothing. We may charge 2% of the service price in that case, or deduct it from a payment already made.</p>
+    <p><strong>If we cancel</strong> &mdash; because of weather, a staff shortage, or anything else &mdash; you get a full refund, and we will offer you the next available slot.</p>
+  </section>
+
+  <section id="s10">
+    <h2><span class="num">10</span>Refunds</h2>
+    <p>Where a refund is due, we pay it back to the method you used, within 5 to 7 working days of agreeing it. Cash payments are refunded in cash or by bank transfer, as you prefer.</p>
+    <p>If you are unhappy with the work, tell us within 7 days of getting the vehicle back and give us a chance to put it right. Where we cannot, you are entitled to a reduction or a refund proportionate to the problem, in line with your rights under consumer law.</p>
+  </section>
+
+  <section id="s11">
+    <h2><span class="num">11</span>Warranty</h2>
+    <p><strong>Our workmanship.</strong> We warrant our application work for 30 days from the date the vehicle is returned to you. If film lifts, a coating streaks, or an accessory works loose because of how it was fitted, we will put it right at no charge.</p>
+    <p><strong>The products themselves.</strong> Paint protection film and ceramic coatings carry a durability warranty from their manufacturer, and it is that warranty &mdash; not one of ours &mdash; that covers the materials on your vehicle. Its length and what it covers depend on the specific product used for your job. We will tell you which warranty applies and hand you the manufacturer&rsquo;s documentation when we return the vehicle.</p>
+    <p>No warranty covers ordinary wear, stone chips and impact damage, harsh or industrial cleaning chemicals, automated brush car washes, accident damage, or work altered by someone else afterwards. Following the aftercare instructions we give you is a condition of both warranties.</p>
+  </section>
+
+  <section id="s12">
+    <h2><span class="num">12</span>Our liability</h2>
+    <p><strong>While your vehicle is with us</strong> &mdash; from collection until it is delivered back or you collect it &mdash; it is in our care. If it is damaged during that time, whether at our workshop, during the work, or while our staff are driving it, we will take responsibility for putting it right at our own cost. We will tell you as soon as we know, rather than leave you to find it.</p>
+    <p>We are responsible for foreseeable loss or damage we cause. We are not responsible for loss that was not foreseeable, or for business losses such as lost earnings or lost opportunity.</p>
+    <p>We are not liable for damage arising from a pre-existing condition of the vehicle that was recorded at collection, or from a defect you did not tell us about.</p>
+    <p>Nothing here limits our liability for death or personal injury caused by our negligence, for fraud, or for anything else that cannot lawfully be limited.</p>
+  </section>
+
+  <section id="s13">
+    <h2><span class="num">13</span>Your responsibilities</h2>
+    <p>When you book, you confirm that:</p>
+    <ul>
+      <li>you own the vehicle, or the owner has authorised you to have this work done;</li>
+      <li>the vehicle is legally registered, insured and roadworthy;</li>
+      <li>the details you gave us about it are accurate; and</li>
+      <li>you have told us about any fault or condition that could affect the work or make the vehicle unsafe to drive.</li>
+    </ul>
+    <p>After the work, please follow the aftercare instructions we give you. Coatings and films need a curing period, and washing too early is the most common cause of a finish failing.</p>
+  </section>
+
+  <section id="s14">
+    <h2><span class="num">14</span>When we may decline or stop work</h2>
+    <p>We may decline a booking, or stop and return the vehicle, if:</p>
+    <ul>
+      <li>the vehicle is unroadworthy, unsafe or unlawful to drive;</li>
+      <li>we have reason to believe it is not yours to have worked on;</li>
+      <li>its condition means we cannot do the work to a standard we are willing to stand behind; or</li>
+      <li>our staff are threatened or abused.</li>
+    </ul>
+    <p>Where we decline before starting, you get a full refund. Where we stop partway for one of these reasons, we charge only for work already done.</p>
+  </section>
+
+  <section id="s15">
+    <h2><span class="num">15</span>Complaints</h2>
+    <p>Please tell us first &mdash; most problems are quickest to fix directly. Call <a href="tel:+919787045679">+91 97870 45679</a> or email <a href="mailto:jagadeesan11@gmail.com">jagadeesan11@gmail.com</a>. We acknowledge complaints within 8 hours and aim to resolve them within 7 days.</p>
+    <p>If we cannot resolve it between us, you may take the matter to the consumer forum with jurisdiction over where you live.</p>
+  </section>
+
+  <section id="s16">
+    <h2><span class="num">16</span>Changes to these terms</h2>
+    <p>We may update these terms. The version that applies to your booking is the one published when you confirmed it, so a later change does not alter a job already booked. Significant changes will be flagged in the app before they take effect.</p>
+  </section>
+
+  <section id="s17">
+    <h2><span class="num">17</span>Governing law</h2>
+    <p>These terms are governed by the laws of India, and the courts at Puducherry shall have exclusive jurisdiction over any dispute arising from them. Nothing in this clause affects any right you have under consumer protection law to bring a complaint where you live or work.</p>
+  </section>
+
+  <footer>
+    <p>Moto Ceramic &middot; Pondicherry, India</p>
+  </footer>
+</main>
+</div>
+</body>
+</html>

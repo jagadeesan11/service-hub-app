@@ -1,0 +1,11 @@
+# Supabase
+.branches
+.temp
+.db-password.txt
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local
+.test-admin-password.txt
+.test-customer-password.txt

@@ -1,0 +1,26 @@
+# EAS Build archives from the GIT REPOSITORY ROOT — this directory — not from
+# mobile/. A .easignore placed inside mobile/ is never read, which is why the
+# first two builds shipped 386 MB and 570 MB archives: both workspaces'
+# node_modules travelled with them.
+#
+# EAS installs dependencies itself, and the mobile build needs nothing from
+# the admin or supabase workspaces.
+
+**/node_modules/
+
+# Sibling workspaces the mobile build never reads.
+admin/
+supabase/
+
+# Build output and local caches.
+**/.expo/
+**/dist/
+**/web-build/
+**/.next/
+**/coverage/
+
+# Editor and tooling noise.
+.idea/
+.claude/
+*.log
+.DS_Store

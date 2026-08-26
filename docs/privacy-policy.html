@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Moto Ceramic Privacy Policy</title>
+<meta name="description" content="How the Moto Ceramic app collects, uses, stores and shares personal data." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,600&family=Public+Sans:wght@400;500;600;700&display=swap" />
+<style>
+/* Light is the base palette; dark redefines only tokens. Nothing is coloured
+   solely inside a media query, so the un-stamped "system" state resolves. */
+:root {
+  --ground: #F8FAFB;
+  --surface: #FFFFFF;
+  --ink: #10161C;
+  --ink-soft: #54626E;
+  --ink-faint: #78868F;
+  --rule: #DFE5EB;
+  --rule-strong: #C9D2DA;
+  --accent: #0B6E82;
+  --accent-soft: #E2F2F6;
+  --flag: #B4531A;
+  --flag-soft: #FBF0E7;
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #0B0F13;
+    --surface: #151B22;
+    --ink: #E9EEF3;
+    --ink-soft: #9AA7B3;
+    --ink-faint: #7A8894;
+    --rule: #232C35;
+    --rule-strong: #33404B;
+    --accent: #3ED8E8;
+    --accent-soft: #10262C;
+    --flag: #E9945C;
+    --flag-soft: #2A1D13;
+  }
+}
+:root[data-theme="dark"] {
+  --ground: #0B0F13;
+  --surface: #151B22;
+  --ink: #E9EEF3;
+  --ink-soft: #9AA7B3;
+  --ink-faint: #7A8894;
+  --rule: #232C35;
+  --rule-strong: #33404B;
+  --accent: #3ED8E8;
+  --accent-soft: #10262C;
+  --flag: #E9945C;
+  --flag-soft: #2A1D13;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: 1fr;
+  max-width: 78rem;
+  margin: 0 auto;
+  padding: clamp(1.75rem, 4vw, 4rem) clamp(1.25rem, 4vw, 3rem) 5rem;
+}
+@media (min-width: 60rem) {
+  .shell { grid-template-columns: 15rem minmax(0, 1fr); gap: 4rem; }
+}
+
+.rail { display: none; }
+@media (min-width: 60rem) {
+  .rail {
+    display: block;
+    position: sticky;
+    top: 3rem;
+    align-self: start;
+    font-size: 0.8125rem;
+  }
+}
+.rail h2 {
+  font-family: var(--sans);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 0.75rem;
+  border: 0;
+  padding: 0;
+  display: block;
+}
+.rail ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.4rem; }
+.rail a { color: var(--ink-soft); text-decoration: none; display: block; }
+.rail a:hover, .rail a:focus-visible { color: var(--accent); }
+.rail .num { color: var(--ink-faint); font-variant-numeric: tabular-nums; margin-right: 0.4rem; }
+
+main { min-width: 0; max-width: 44rem; }
+
+.eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.75rem;
+}
+h1 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 2.9rem);
+  line-height: 1.12;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+  margin: 0 0 0.75rem;
+}
+.standfirst {
+  font-family: var(--serif);
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0 0 2rem;
+  max-width: 34rem;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+  padding: 0.85rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  color: var(--ink-soft);
+  margin-bottom: 2.5rem;
+}
+.meta b { color: var(--ink); font-weight: 600; }
+
+/* The unfilled-field treatment. This colour is used for nothing else on the
+   page, so "still to do" is never confused with emphasis. */
+.fill {
+  background: var(--flag-soft);
+  color: var(--flag);
+  font-family: var(--sans);
+  font-weight: 600;
+  font-size: 0.9em;
+  padding: 0.1em 0.4em;
+  border-radius: 0.2rem;
+  border: 1px dashed var(--flag);
+}
+.notice {
+  background: var(--flag-soft);
+  border: 1px solid var(--flag);
+  border-radius: 0.5rem;
+  padding: 1rem 1.15rem;
+  margin: 0 0 2.5rem;
+  font-size: 0.9375rem;
+}
+.notice p { margin: 0 0 0.6rem; }
+.notice p:last-child { margin-bottom: 0; }
+.notice strong { color: var(--flag); }
+.notice ul { margin: 0.5rem 0 0.6rem; padding-left: 1.15rem; }
+.notice li { margin-bottom: 0.3rem; }
+
+section { margin-bottom: 2.75rem; scroll-margin-top: 2rem; }
+main h2 {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.4rem;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  margin: 0 0 0.85rem;
+  padding-top: 0.9rem;
+  border-top: 2px solid var(--accent);
+  display: flex;
+  gap: 0.7rem;
+  align-items: baseline;
+}
+main h2 .num {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+  flex-shrink: 0;
+}
+p { margin: 0 0 0.9rem; }
+ul { margin: 0 0 0.9rem; padding-left: 1.2rem; }
+li { margin-bottom: 0.4rem; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+strong { font-weight: 600; }
+code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.875em;
+  background: var(--accent-soft);
+  padding: 0.1em 0.35em;
+  border-radius: 0.2rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 0.5rem;
+  background: var(--surface);
+  margin: 0 0 1.25rem;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 34rem;
+  font-size: 0.875rem;
+}
+caption {
+  caption-side: bottom;
+  text-align: left;
+  padding: 0.7rem 1rem;
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+  border-top: 1px solid var(--rule);
+}
+th, td {
+  text-align: left;
+  padding: 0.7rem 1rem;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule);
+}
+thead th {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  background: var(--accent-soft);
+  border-bottom: 1px solid var(--rule-strong);
+  white-space: nowrap;
+}
+tbody tr:last-child td { border-bottom: none; }
+td:first-child { font-weight: 600; }
+
+.no-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 0.9rem;
+  display: grid;
+  gap: 0.5rem;
+}
+.no-list li {
+  padding-left: 1.6rem;
+  position: relative;
+  margin: 0;
+}
+.no-list li::before {
+  content: "\2014";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+footer {
+  margin-top: 3.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--rule);
+  font-size: 0.8125rem;
+  color: var(--ink-faint);
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<nav class="rail" aria-label="Contents">
+  <h2>Contents</h2>
+  <ol>
+    <li><a href="#s1"><span class="num">1</span>Who we are</a></li>
+    <li><a href="#s2"><span class="num">2</span>Scope</a></li>
+    <li><a href="#s3"><span class="num">3</span>Data we collect</a></li>
+    <li><a href="#s4"><span class="num">4</span>What we don&rsquo;t collect</a></li>
+    <li><a href="#s5"><span class="num">5</span>Why we collect it</a></li>
+    <li><a href="#s6"><span class="num">6</span>Who else processes it</a></li>
+    <li><a href="#s7"><span class="num">7</span>Where it&rsquo;s stored</a></li>
+    <li><a href="#s8"><span class="num">8</span>How long we keep it</a></li>
+    <li><a href="#s9"><span class="num">9</span>Your rights</a></li>
+    <li><a href="#s10"><span class="num">10</span>Children</a></li>
+    <li><a href="#s11"><span class="num">11</span>Security</a></li>
+    <li><a href="#s12"><span class="num">12</span>Changes</a></li>
+    <li><a href="#s13"><span class="num">13</span>Contact &amp; grievances</a></li>
+  </ol>
+</nav>
+
+<main>
+  <p class="eyebrow">Moto Ceramic</p>
+  <h1>Privacy Policy</h1>
+  <p class="standfirst">What the Moto Ceramic app collects when you book a service, why we need each piece, and who else it passes through.</p>
+
+  <div class="meta">
+    <span><b>Effective</b> 1 September 2026</span>
+    <span><b>Last updated</b> 24 August 2026</span>
+    <span><b>Applies to</b> Moto Ceramic mobile app (com.nexora.app)</span>
+  </div>
+
+  <section id="s1">
+    <h2><span class="num">01</span>Who we are</h2>
+    <p>The Moto Ceramic app is operated by Vimal Kumar (&ldquo;we&rdquo;, &ldquo;us&rdquo;), trading as Moto Ceramic, at:</p>
+    <p>RTO office, 144, 100 Feet Rd, opp. to Bharathi Mill Road, Ambal Nagar, Ozhandai Keerapalaiyam, Pondicherry 605004, India.<br />
+    Phone: <a href="tel:+919787045679">+91 97870 45679</a></p>
+    <p>We provide vehicle care services &mdash; paint protection film, ceramic coating and accessory fitting &mdash; booked through the app.</p>
+    <p>For the purposes of the Digital Personal Data Protection Act, 2023, we are the <strong>Data Fiduciary</strong> for the data described here.</p>
+  </section>
+
+  <section id="s2">
+    <h2><span class="num">02</span>What this policy covers</h2>
+    <p>This policy covers the Moto Ceramic mobile app for Android and iOS, and the booking records it creates. It does not cover any third-party site you reach from a link in the app, including the payment page described in section 6, which is governed by that provider&rsquo;s own policy.</p>
+  </section>
+
+  <section id="s3">
+    <h2><span class="num">03</span>Data we collect</h2>
+    <p>We collect only what a booking needs. Everything below is given to us by you &mdash; none of it is gathered silently in the background.</p>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Personal data held by the Moto Ceramic app.</caption>
+        <thead>
+          <tr><th scope="col">Data</th><th scope="col">When it is collected</th><th scope="col">Why we need it</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Phone number</td>
+            <td>Sign-in &mdash; it is your account identifier</td>
+            <td>To send your one-time login code, and so a technician can reach you</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td>Sign-up, and again on each booking</td>
+            <td>To address you, and to tell the technician who to ask for on arrival</td>
+          </tr>
+          <tr>
+            <td>Email address <em>(optional)</em></td>
+            <td>Your profile</td>
+            <td>Receipts and replies to support requests. The app works without it</td>
+          </tr>
+          <tr>
+            <td>Gender <em>(optional)</em></td>
+            <td>Sign-up</td>
+            <td>Demographic information only. &ldquo;Prefer not to say&rdquo; is offered, and nothing depends on your answer</td>
+          </tr>
+          <tr>
+            <td>Service address<br />(street, city, PIN code)</td>
+            <td>Your profile, and on each booking</td>
+            <td>To send a technician to the right place, or to collect your vehicle if you ask for pickup</td>
+          </tr>
+          <tr>
+            <td>Vehicle details</td>
+            <td>When you book</td>
+            <td>To price the job correctly and bring the right materials. Which details we ask for depends on the service</td>
+          </tr>
+          <tr>
+            <td>Booking details<br />(service, extras, time, price, pickup notes)</td>
+            <td>When you book</td>
+            <td>To schedule, carry out and bill the work</td>
+          </tr>
+          <tr>
+            <td>Payment records<br />(amount, method, transaction reference, status)</td>
+            <td>At checkout</td>
+            <td>Proof of payment, refunds and accounting</td>
+          </tr>
+          <tr>
+            <td>Push notification token</td>
+            <td>Only if you allow notifications</td>
+            <td>To tell you when your booking is confirmed, a technician is assigned, or the work is finished</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s4">
+    <h2><span class="num">04</span>What we deliberately do not collect</h2>
+    <p>Stated plainly, because these are the things people reasonably assume an app of this kind takes:</p>
+    <ul class="no-list">
+      <li><strong>Your device&rsquo;s location.</strong> The app never asks for location permission and never reads GPS. Every address we hold is one you typed in yourself.</li>
+      <li><strong>Your card, UPI ID or bank details.</strong> These are entered on the payment provider&rsquo;s own page and never reach our servers. We receive only a transaction reference and whether it succeeded.</li>
+      <li><strong>Contacts, photos, camera, microphone or files.</strong> The app requests none of these permissions.</li>
+      <li><strong>Advertising identifiers, or any form of behavioural or cross-app tracking.</strong> The app contains no analytics or advertising software of any kind.</li>
+    </ul>
+    <p>We do not sell personal data, and we do not share it for advertising.</p>
+  </section>
+
+  <section id="s5">
+    <h2><span class="num">05</span>Why we collect it</h2>
+    <p>We process your data to deliver a service you asked for: to create and manage your account, price and schedule your booking, send a technician to your address, take payment, keep you informed about your booking, and meet our tax and accounting obligations.</p>
+    <p>Where the law requires your consent, you give it by creating an account and making a booking, and you can withdraw it as described in section 9. The optional fields &mdash; email, gender, notifications &mdash; are genuinely optional, and declining them does not stop you booking.</p>
+  </section>
+
+  <section id="s6">
+    <h2><span class="num">06</span>Who else processes your data</h2>
+    <p>We use four providers to run the app. Each processes data only on our instructions, and each receives only what its job requires.</p>
+
+    <div class="table-wrap">
+      <table>
+        <caption>Processors, and what each one receives.</caption>
+        <thead>
+          <tr><th scope="col">Provider</th><th scope="col">What it does</th><th scope="col">What it receives</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Razorpay</td>
+            <td>Processes card, UPI and netbanking payments</td>
+            <td>Your payment details, which you enter on Razorpay&rsquo;s own secure page, plus the amount and a reference to your booking. We never see your card or UPI credentials</td>
+          </tr>
+          <tr>
+            <td>Supabase</td>
+            <td>Hosts our database, accounts and application servers</td>
+            <td>All of the data listed in section 3. This is where your account and bookings live</td>
+          </tr>
+          <tr>
+            <td>MSG91</td>
+            <td>Delivers the SMS containing your login code</td>
+            <td>Your phone number and the one-time code</td>
+          </tr>
+          <tr>
+            <td>Expo</td>
+            <td>Delivers push notifications to your device</td>
+            <td>Your notification token and the text of the notification</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>Razorpay&rsquo;s privacy policy is at <a href="https://razorpay.com/privacy/" rel="noopener">razorpay.com/privacy</a>, and Supabase&rsquo;s at <a href="https://supabase.com/privacy" rel="noopener">supabase.com/privacy</a>.</p>
+    <p>Beyond these, we disclose personal data only where the law compels us to, or where it is necessary to establish or defend a legal claim.</p>
+  </section>
+
+  <section id="s7">
+    <h2><span class="num">07</span>Where your data is stored</h2>
+    <p>Your account and booking data is stored in India, in Supabase&rsquo;s Mumbai region (<code>ap-south-1</code>).</p>
+    <p>Our other providers may process data outside India in the course of delivering messages and payments. Where that happens, it is limited to the data listed against that provider in section 6.</p>
+  </section>
+
+  <section id="s8">
+    <h2><span class="num">08</span>How long we keep it</h2>
+    <p>We keep your account and its booking history for as long as your account is open, so that you can see what work has been done on your vehicle.</p>
+    <p>If you ask us to delete your account, we remove your personal data within 180 days, except payment and invoice records, which we must retain for 8 years under Indian tax law.</p>
+  </section>
+
+  <section id="s9">
+    <h2><span class="num">09</span>Your rights</h2>
+    <p>You may:</p>
+    <ul>
+      <li><strong>See what we hold.</strong> Your name, phone, email, address and full booking history are visible in the app under Profile, and you can ask us for a copy of anything else.</li>
+      <li><strong>Correct it.</strong> Profile details can be edited in the app at any time. For anything else, contact us.</li>
+      <li><strong>Delete it.</strong> Ask us to close your account and erase your data, subject to the retention exception in section 8.</li>
+      <li><strong>Withdraw consent.</strong> Turn notifications off in your device settings, or ask us to stop processing your data &mdash; which will mean closing your account, since we cannot deliver a booking without it.</li>
+      <li><strong>Complain.</strong> To our Grievance Officer below, and after that to the Data Protection Board of India.</li>
+    </ul>
+    <p>We will respond to any of these within 21 days, and we do not charge for it.</p>
+  </section>
+
+  <section id="s10">
+    <h2><span class="num">10</span>Children</h2>
+    <p>The app is not intended for anyone under 18, and we do not knowingly collect data from children. If you believe a child has given us their data, contact us and we will delete it.</p>
+  </section>
+
+  <section id="s11">
+    <h2><span class="num">11</span>How we protect your data</h2>
+    <p>Access is restricted at the database level, so one customer&rsquo;s account cannot read or alter another&rsquo;s. Your login session is held in your device&rsquo;s encrypted secure storage. Traffic between the app and our servers is encrypted in transit, and payment credentials never pass through our systems at all.</p>
+    <p>No system is perfectly secure. If a breach affects your personal data, we will notify you and the Data Protection Board of India as the law requires.</p>
+  </section>
+
+  <section id="s12">
+    <h2><span class="num">12</span>Changes to this policy</h2>
+    <p>If we change how we handle your data, we will update this page and change the &ldquo;last updated&rdquo; date above. Where a change is significant, we will tell you in the app before it takes effect.</p>
+  </section>
+
+  <section id="s13">
+    <h2><span class="num">13</span>Contact and grievances</h2>
+    <p>For any question about this policy or about your data:</p>
+    <p><strong>Grievance Officer:</strong> Jagadeesan<br />
+    <strong>Email:</strong> <a href="mailto:jagadeesan11@gmail.com">jagadeesan11@gmail.com</a><br />
+    <strong>Phone:</strong> <a href="tel:+919787045679">+91 97870 45679</a><br />
+    <strong>Post:</strong> RTO office, 144, 100 Feet Rd, opp. to Bharathi Mill Road, Ambal Nagar, Ozhandai Keerapalaiyam, Pondicherry 605004, India</p>
+    <p>We acknowledge complaints within 8 hours and resolve them within 7 days. If you are not satisfied with our response, you may complain to the Data Protection Board of India.</p>
+    <p>This policy is governed by the laws of India, and the courts at Puducherry shall have exclusive jurisdiction over any dispute arising from it. Nothing in this clause affects any right you have under consumer protection law to bring a complaint where you live or work.</p>
+  </section>
+
+  <footer>
+    <p>Moto Ceramic &middot; Pondicherry, India</p>
+  </footer>
+</main>
+</div>
+</body>
+</html>

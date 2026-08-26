@@ -1,0 +1,155 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  /* Was `var(--font-sans)` — a self-reference, so it resolved to nothing and
+     every `font-sans` element fell back to the browser default serif. */
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  /* Graphite + ice cyan. The same hex values as the mobile app's token file,
+     converted to OKLCH -- the two surfaces are one system, not two palettes
+     that happen to look similar. Neutrals carry a slight blue bias so the
+     greys read as chosen rather than inherited.
+
+     Every foreground/background pair was checked against WCAG AA before being
+     written down. Re-check if you change one. */
+  --background: oklch(0.975 0.003 247.9);
+  --foreground: oklch(0.197 0.015 248.6);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.197 0.015 248.6);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.197 0.015 248.6);
+  --primary: oklch(0.497 0.086 216.7);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.950 0.007 247.9);
+  --secondary-foreground: oklch(0.300 0.022 248.0);
+  --muted: oklch(0.958 0.006 247.9);
+  --muted-foreground: oklch(0.489 0.026 244.2);
+  --accent: oklch(0.950 0.018 214.4);
+  --accent-foreground: oklch(0.330 0.055 216.7);
+  --destructive: oklch(0.543 0.174 29.7);
+  /* Status colours. Semantic, and separate from the cyan accent: "this worked"
+     and "this is the action" must not be the same colour. */
+  --success: oklch(0.484 0.120 151.6);
+  --success-foreground: oklch(0.957 0.019 157.9);
+  --warning: oklch(0.529 0.104 80.9);
+  --warning-foreground: oklch(0.960 0.027 85.7);
+  --border: oklch(0.919 0.010 247.9);
+  --input: oklch(0.919 0.010 247.9);
+  --ring: oklch(0.497 0.086 216.7);
+  /* Chart ramp walks lightness along the accent hue, so series stay
+     distinguishable in greyscale and to colour-blind viewers. */
+  --chart-1: oklch(0.497 0.086 216.7);
+  --chart-2: oklch(0.590 0.098 210.0);
+  --chart-3: oklch(0.680 0.105 205.0);
+  --chart-4: oklch(0.770 0.095 200.0);
+  --chart-5: oklch(0.855 0.070 197.0);
+
+  --sidebar: oklch(0.958 0.006 247.9);
+  --sidebar-foreground: oklch(0.197 0.015 248.6);
+  --sidebar-primary: oklch(0.497 0.086 216.7);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.938 0.022 214.4);
+  --sidebar-accent-foreground: oklch(0.300 0.055 216.7);
+  --sidebar-border: oklch(0.906 0.012 247.9);
+  --sidebar-ring: oklch(0.497 0.086 216.7);
+}
+
+.dark {
+  --background: oklch(0.166 0.011 248.5);
+  --foreground: oklch(0.947 0.009 247.9);
+  --card: oklch(0.219 0.016 252.5);
+  --card-foreground: oklch(0.947 0.009 247.9);
+  --popover: oklch(0.219 0.016 252.5);
+  --popover-foreground: oklch(0.947 0.009 247.9);
+  --primary: oklch(0.811 0.125 205.4);
+  --primary-foreground: oklch(0.199 0.029 215.2);
+  --secondary: oklch(0.268 0.018 250.0);
+  --secondary-foreground: oklch(0.930 0.010 247.9);
+  --muted: oklch(0.258 0.017 250.0);
+  --muted-foreground: oklch(0.700 0.024 245.0);
+  --accent: oklch(0.290 0.032 217.7);
+  --accent-foreground: oklch(0.930 0.020 210.0);
+  --destructive: oklch(0.710 0.149 28.3);
+  --success: oklch(0.800 0.182 151.7);
+  --success-foreground: oklch(0.257 0.038 157.5);
+  --warning: oklch(0.762 0.126 79.6);
+  --warning-foreground: oklch(0.254 0.028 78.0);
+  --border: oklch(0.289 0.021 248.5);
+  --input: oklch(0.310 0.023 248.5);
+  --ring: oklch(0.811 0.125 205.4);
+  --chart-1: oklch(0.811 0.125 205.4);
+  --chart-2: oklch(0.720 0.115 210.0);
+  --chart-3: oklch(0.630 0.100 214.0);
+  --chart-4: oklch(0.540 0.088 218.0);
+  --chart-5: oklch(0.450 0.075 222.0);
+  --sidebar: oklch(0.140 0.011 248.5);
+  --sidebar-foreground: oklch(0.930 0.009 247.9);
+  --sidebar-primary: oklch(0.811 0.125 205.4);
+  --sidebar-primary-foreground: oklch(0.199 0.029 215.2);
+  --sidebar-accent: oklch(0.265 0.030 217.7);
+  --sidebar-accent-foreground: oklch(0.930 0.020 210.0);
+  --sidebar-border: oklch(0.278 0.021 248.5);
+  --sidebar-ring: oklch(0.811 0.125 205.4);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}

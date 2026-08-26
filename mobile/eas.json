@@ -1,0 +1,47 @@
+{
+  "cli": {
+    "version": ">=13.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "resourceClass": "medium"
+      },
+      "ios": {
+        "resourceClass": "medium",
+        "simulator": true
+      }
+    },
+    "preview": {
+      "extends": "development",
+      "developmentClient": false,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      },
+      "ios": {
+        "simulator": false
+      }
+    },
+    "production": {
+      "distribution": "store",
+      "autoIncrement": true,
+      "android": {
+        "resourceClass": "medium",
+        // Play Store requires an App Bundle, not an APK. This is already the
+        // default for distribution "store", but stated explicitly so the
+        // store artifact never depends on a default quietly changing.
+        "buildType": "app-bundle"
+      },
+      "ios": {
+        "resourceClass": "medium"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}

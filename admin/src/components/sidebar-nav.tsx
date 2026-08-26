@@ -1,0 +1,66 @@
+'use client';
+
+import {
+  CalendarCheck,
+  ChartColumn,
+  LayoutGrid,
+  Layers,
+  Settings,
+  Shield,
+  Star,
+  Users,
+  Wrench,
+} from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+import { cn } from '@/lib/utils';
+
+const NAV_ITEMS = [
+  { href: '/', label: 'Dashboard', Icon: LayoutGrid },
+  { href: '/categories', label: 'Categories', Icon: Layers },
+  { href: '/services', label: 'Services', Icon: Wrench },
+  { href: '/bookings', label: 'Bookings', Icon: CalendarCheck },
+  { href: '/technicians', label: 'Technicians', Icon: Users },
+  { href: '/feedback', label: 'Feedback', Icon: Star },
+  { href: '/reports', label: 'Reports', Icon: ChartColumn },
+  { href: '/users', label: 'Users', Icon: Shield },
+  { href: '/settings', label: 'Settings', Icon: Settings },
+];
+
+export function SidebarNav() {
+  const pathname = usePathname();
+
+  return (
+    <nav className="flex flex-col gap-0.5">
+      {NAV_ITEMS.map(({ href, label, Icon }) => {
+        const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
+        return (
+          <Link
+            key={href}
+            href={href}
+            aria-current={isActive ? 'page' : undefined}
+            className={cn(
+              'group relative flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+              'focus-visible:ring-2 focus-visible:ring-sidebar-ring focus-visible:outline-none',
+              isActive
+                ? 'bg-sidebar-accent text-sidebar-accent-foreground'
+                : 'text-muted-foreground hover:bg-sidebar-accent/50 hover:text-sidebar-accent-foreground',
+            )}
+          >
+            {/* Active rail — encodes selection in form as well as colour, so
+                it survives low-contrast displays and colour-blind viewing. */}
+            <span
+              className={cn(
+                'absolute left-0 h-5 w-0.5 rounded-r-full bg-primary transition-opacity',
+                isActive ? 'opacity-100' : 'opacity-0',
+              )}
+            />
+            <Icon className={cn('size-4 shrink-0', isActive && 'text-primary')} />
+            {label}
+          </Link>
+        );
+      })}
+    </nav>
+  );
+}

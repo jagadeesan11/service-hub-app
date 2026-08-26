@@ -1,0 +1,156 @@
+export type ID = string;
+
+export type UserRole = 'customer' | 'technician' | 'admin' | 'shop_owner';
+
+export interface AppUser {
+  id: ID;
+  name: string | null;
+  /** Contact number on the profile, not necessarily the sign-in identity. */
+  phone: string | null;
+  /** Contact address the customer typed in — NOT the login email. */
+  email: string | null;
+  role: UserRole;
+  created_at: string;
+}
+
+/** A profile joined with the identity the person actually signs in with. */
+export interface AppUserWithLogin extends AppUser {
+  login_email: string | null;
+  login_phone: string | null;
+}
+
+export type PricingType = 'fixed' | 'tiered' | 'per_unit';
+
+export interface Category {
+  id: ID;
+  name: string;
+  slug: string;
+  icon: string | null;
+  input_template_id: ID | null;
+}
+
+export interface CategoryWithTemplate extends Category {
+  input_templates: Pick<InputTemplate, 'id' | 'name' | 'fields'> | null;
+}
+
+export type InputFieldType = 'text' | 'number' | 'select';
+
+export interface InputTemplateField {
+  name: string;
+  label: string;
+  type: InputFieldType;
+  required: boolean;
+  options?: string[];
+}
+
+export interface InputTemplate {
+  id: ID;
+  name: string;
+  fields: InputTemplateField[];
+}
+
+export interface Service {
+  id: ID;
+  category_id: ID;
+  name: string;
+  description: string | null;
+  images: string[];
+  base_price: number;
+  pricing_type: PricingType;
+  duration_minutes: number | null;
+  is_active: boolean;
+  attributes: Record<string, unknown>;
+  /** Key into the bundled icon set; null renders a lettered fallback. */
+  icon: string | null;
+  created_at: string;
+}
+
+export interface ServiceWithCategory extends Service {
+  categories: Pick<Category, 'id' | 'name'> | null;
+}
+
+export interface PricingRule {
+  id: ID;
+  service_id: ID;
+  condition: Record<string, string>;
+  price: number;
+}
+
+export interface Addon {
+  id: ID;
+  service_id: ID;
+  name: string;
+  price: number;
+  is_multi_select: boolean;
+}
+
+export type TechnicianStatus = 'active' | 'inactive';
+
+export interface Technician {
+  id: ID;
+  profile_id: ID | null;
+  name: string;
+  phone: string | null;
+  category_ids: ID[];
+  status: TechnicianStatus;
+}
+
+/** Singleton row — see 20260824120000_app_settings.sql. */
+export interface AppSettings {
+  id: boolean;
+  shop_name: string;
+  support_email: string | null;
+  support_phone: string | null;
+  shop_address_line: string | null;
+  shop_city: string | null;
+  shop_postal_code: string | null;
+  cod_enabled: boolean;
+  online_payment_enabled: boolean;
+  privacy_url: string | null;
+  terms_url: string | null;
+  updated_at: string;
+}
+
+export type PaymentMethod = 'online' | 'cod' | 'offline';
+
+export type BookingStatus =
+  | 'pending_payment'
+  | 'confirmed'
+  | 'assigned'
+  | 'in_progress'
+  | 'completed'
+  | 'cancelled';
+
+export interface BookingCustomer {
+  name: string | null;
+  phone: string | null;
+  email: string | null;
+  address_line: string | null;
+  city: string | null;
+  postal_code: string | null;
+}
+
+export interface BookingListItem {
+  id: ID;
+  scheduled_at: string;
+  status: BookingStatus;
+  total_price: number;
+  technician_id: ID | null;
+  addon_ids: ID[];
+  created_at: string;
+  contact_name: string | null;
+  contact_phone: string | null;
+  service_address: string | null;
+  service_city: string | null;
+  service_postal_code: string | null;
+  needs_pickup: boolean;
+  pickup_notes: string | null;
+  payment_method: PaymentMethod;
+  /** to-one: booking_id is UNIQUE on invoices, so this is an object or null. */
+  invoices: { number: string } | { number: string }[] | null;
+  services: { id: ID; name: string; category_id: ID; duration_minutes: number | null } | null;
+  profiles: BookingCustomer | null;
+  technicians: { id: ID; name: string; phone: string | null } | null;
+  /** Whatever the category's input_template collected, e.g. vehicle details. */
+  customer_assets: { attributes: Record<string, string> } | null;
+}
