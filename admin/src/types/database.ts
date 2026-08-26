@@ -107,6 +107,8 @@ export interface AppSettings {
   cod_enabled: boolean;
   online_payment_enabled: boolean;
   privacy_url: string | null;
+  instagram_url: string | null;
+  whatsapp_number: string | null;
   terms_url: string | null;
   updated_at: string;
 }

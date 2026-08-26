@@ -8,48 +8,62 @@ import { ListGroup, ListRow } from '@/components/ui/list-row';
 import { FAQ } from '@/constants/links';
 import { Spacing } from '@/constants/theme';
 import { formatShopAddress, useAppSettings } from '@/hooks/use-app-settings';
+import { instagramHandle, whatsappUrl } from '@/lib/social-links';
 
 export default function HelpCentreScreen() {
   // Contact details come from the admin panel, so a changed number reaches
   // customers without a store release.
   const { settings } = useAppSettings();
   const address = formatShopAddress(settings);
+  const whatsapp = whatsappUrl(settings.whatsapp_number);
+  const instagram = instagramHandle(settings.instagram_url);
+
+  // Built as a list rather than a chain of conditional rows: with five
+  // optional channels, `first={!a && !b && !c && !d}` is a bug waiting to
+  // happen, and whichever ones the shop has filled in should just close up.
+  const channels: { label: string; value: string; url: string }[] = [
+    settings.support_email && {
+      label: 'Email us',
+      value: settings.support_email,
+      url: `mailto:${settings.support_email}`,
+    },
+    settings.support_phone && {
+      label: 'Call us',
+      value: settings.support_phone,
+      url: `tel:${settings.support_phone.replace(/\s/g, '')}`,
+    },
+    whatsapp && {
+      label: 'WhatsApp',
+      value: settings.whatsapp_number ?? 'Message us',
+      url: whatsapp,
+    },
+    instagram &&
+      settings.instagram_url && {
+        label: 'Instagram',
+        value: instagram,
+        url: settings.instagram_url,
+      },
+    address && {
+      label: 'Visit us',
+      value: address,
+      url: `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,
+    },
+  ].filter((c): c is { label: string; value: string; url: string } => Boolean(c));
 
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea} edges={['left', 'right', 'bottom']}>
         <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
           <ListGroup title={`Get in touch with ${settings.shop_name}`}>
-            {settings.support_email ? (
+            {channels.map((channel, index) => (
               <ListRow
-                first
-                label="Email us"
-                value={settings.support_email}
-                onPress={() => Linking.openURL(`mailto:${settings.support_email}`)}
+                key={channel.label}
+                first={index === 0}
+                label={channel.label}
+                value={channel.value}
+                onPress={() => Linking.openURL(channel.url)}
               />
-            ) : null}
-            {settings.support_phone ? (
-              <ListRow
-                first={!settings.support_email}
-                label="Call us"
-                value={settings.support_phone}
-                onPress={() =>
-                  Linking.openURL(`tel:${settings.support_phone!.replace(/\s/g, '')}`)
-                }
-              />
-            ) : null}
-            {address ? (
-              <ListRow
-                first={!settings.support_email && !settings.support_phone}
-                label="Visit us"
-                value={address}
-                onPress={() =>
-                  Linking.openURL(
-                    `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(address)}`,
-                  )
-                }
-              />
-            ) : null}
+            ))}
           </ListGroup>
 
           <View style={styles.faq}>

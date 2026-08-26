@@ -31,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { matchesUserQuery } from '@/lib/user-search';
 import type { AppUserWithLogin, UserRole } from '@/types/database';
 
 const ROLE_LABELS: Record<UserRole, string> = {
@@ -198,10 +199,25 @@ export function UsersTable({
   const [removing, setRemoving] = useState<AppUserWithLogin | null>(null);
   const [removeOpen, setRemoveOpen] = useState(false);
 
+  const [query, setQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState<'all' | 'staff' | UserRole>('all');
+
   const sorted = [...users].sort(
     (a, b) => ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role),
   );
   const staffCount = users.filter((u) => STAFF_ROLES.includes(u.role)).length;
+
+  const filtered = sorted.filter((user) => {
+    const roleOk =
+      roleFilter === 'all'
+        ? true
+        : roleFilter === 'staff'
+          ? STAFF_ROLES.includes(user.role)
+          : user.role === roleFilter;
+    return roleOk && matchesUserQuery(user, query);
+  });
+
+  const isFiltered = query.trim() !== '' || roleFilter !== 'all';
 
   async function run(
     action: (fd: FormData) => Promise<{ ok: boolean; message?: string }>,
@@ -226,12 +242,68 @@ export function UsersTable({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="text-sm text-muted-foreground">
-          {staffCount} staff {staffCount === 1 ? 'account' : 'accounts'} · {users.length - staffCount}{' '}
-          customers
+          {isFiltered ? (
+            <>
+              Showing {filtered.length} of {users.length}
+            </>
+          ) : (
+            <>
+              {staffCount} staff {staffCount === 1 ? 'account' : 'accounts'} ·{' '}
+              {users.length - staffCount} customers
+            </>
+          )}
         </p>
         <Button size="sm" onClick={() => setAdding(true)}>
           Add user
         </Button>
+      </div>
+
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+        <Input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search name, email or phone"
+          aria-label="Search users"
+          className="sm:max-w-xs"
+        />
+
+        <div className="flex flex-wrap gap-1.5">
+          {(
+            [
+              ['all', 'Everyone'],
+              ['staff', 'Staff'],
+              ['customer', 'Customers'],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setRoleFilter(key)}
+              aria-pressed={roleFilter === key}
+              className={
+                roleFilter === key
+                  ? 'rounded-lg bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground'
+                  : 'rounded-lg border border-border px-3 py-1.5 text-sm text-muted-foreground hover:bg-muted'
+              }
+            >
+              {label}
+            </button>
+          ))}
+
+          {isFiltered && (
+            <button
+              type="button"
+              onClick={() => {
+                setQuery('');
+                setRoleFilter('all');
+              }}
+              className="rounded-lg px-3 py-1.5 text-sm text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Clear
+            </button>
+          )}
+        </div>
       </div>
 
       {error && <p className="text-sm text-destructive">{error}</p>}
@@ -249,14 +321,14 @@ export function UsersTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {sorted.length === 0 ? (
+            {filtered.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="text-center text-muted-foreground">
-                  No users yet.
+                  {isFiltered ? "No one matches that search." : "No users yet."}
                 </TableCell>
               </TableRow>
             ) : (
-              sorted.map((user) => {
+              filtered.map((user) => {
                 const isSelf = user.id === currentUserId;
                 return (
                   <TableRow key={user.id}>

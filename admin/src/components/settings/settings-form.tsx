@@ -23,6 +23,8 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
   const [onlineEnabled, setOnlineEnabled] = useState(settings.online_payment_enabled);
   const [privacyUrl, setPrivacyUrl] = useState(settings.privacy_url ?? '');
   const [termsUrl, setTermsUrl] = useState(settings.terms_url ?? '');
+  const [instagramUrl, setInstagramUrl] = useState(settings.instagram_url ?? '');
+  const [whatsappNumber, setWhatsappNumber] = useState(settings.whatsapp_number ?? '');
 
   const [error, setError] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
@@ -48,6 +50,8 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
         online_payment_enabled: onlineEnabled,
         privacy_url: privacyUrl || null,
         terms_url: termsUrl || null,
+        instagram_url: instagramUrl.trim() || null,
+        whatsapp_number: whatsappNumber.replace(/[^+0-9]/g, '') || null,
       })
       .eq('id', true);
 
@@ -122,6 +126,46 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
             onChange={(e) => setSupportPhone(e.target.value)}
             placeholder="+91 98765 43210"
           />
+        </div>
+      </section>
+
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-sm font-semibold">Social</h2>
+          <p className="text-xs text-muted-foreground">
+            Shown in the app&rsquo;s help centre. Leave either blank to hide it.
+          </p>
+        </div>
+
+        <div>
+          <Label htmlFor="whatsapp_number" className="mb-1.5">
+            WhatsApp number
+          </Label>
+          <Input
+            id="whatsapp_number"
+            value={whatsappNumber}
+            onChange={(e) => setWhatsappNumber(e.target.value)}
+            placeholder="+91 98765 43210"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            With the country code. Spaces are fine — they are stripped on save.
+          </p>
+        </div>
+
+        <div>
+          <Label htmlFor="instagram_url" className="mb-1.5">
+            Instagram profile
+          </Label>
+          <Input
+            id="instagram_url"
+            value={instagramUrl}
+            onChange={(e) => setInstagramUrl(e.target.value)}
+            placeholder="https://instagram.com/yourshop"
+          />
+          <p className="mt-1 text-xs text-muted-foreground">
+            The full https link to your profile. Only instagram.com addresses are accepted, because
+            the app opens this directly on the customer&rsquo;s phone.
+          </p>
         </div>
       </section>
 

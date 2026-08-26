@@ -51,11 +51,15 @@ function RootNavigator() {
         {/* Outside the (app) tab group: NativeTabs turns every child directory
             into a tab, so sub-screens must live here to push over the tab bar. */}
         <Stack.Screen name="settings" options={{ headerShown: false }} />
+        {/* A recovery session is a real session, so this lives inside the
+            signed-in guard, not with the sign-in screens. */}
+        <Stack.Screen name="reset-password" options={{ headerShown: false }} />
       </Stack.Protected>
 
       <Stack.Protected guard={!session}>
-        <Stack.Screen name="sign-in/phone" options={{ headerShown: false }} />
-        <Stack.Screen name="sign-in/verify" options={{ headerShown: false }} />
+        <Stack.Screen name="sign-in/index" options={{ headerShown: false }} />
+        <Stack.Screen name="sign-in/sign-up" options={{ headerShown: false }} />
+        <Stack.Screen name="sign-in/help" options={{ headerShown: false }} />
       </Stack.Protected>
     </Stack>
   );

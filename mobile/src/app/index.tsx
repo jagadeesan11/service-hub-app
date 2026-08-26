@@ -6,11 +6,16 @@ import { useProfile } from '@/hooks/use-profile';
 // Bare "/" has no screen of its own; this routes to wherever the
 // Stack.Protected guards in the root layout actually allow.
 export default function Index() {
-  const { session, user, isLoading } = useAuth();
+  const { session, user, isLoading, isRecovering } = useAuth();
   const { data: profile, isLoading: isProfileLoading } = useProfile(user?.id);
 
   if (isLoading) return null;
-  if (!session) return <Redirect href="/sign-in/phone" />;
+  if (!session) return <Redirect href="/sign-in" />;
+
+  // Checked before onboarding and home: someone who followed a reset link is
+  // signed in, but landing them on the home screen would quietly drop the one
+  // thing they opened the app to do.
+  if (isRecovering) return <Redirect href="/reset-password" />;
 
   // Wait for the profile before deciding, otherwise an existing customer
   // gets flashed the onboarding screen on every cold start.

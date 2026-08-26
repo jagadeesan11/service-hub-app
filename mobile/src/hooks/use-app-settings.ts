@@ -13,6 +13,8 @@ export interface AppSettings {
   cod_enabled: boolean;
   online_payment_enabled: boolean;
   privacy_url: string | null;
+  instagram_url: string | null;
+  whatsapp_number: string | null;
   terms_url: string | null;
 }
 
@@ -28,6 +30,8 @@ export const FALLBACK_SETTINGS: AppSettings = {
   cod_enabled: false,
   online_payment_enabled: true,
   privacy_url: null,
+  instagram_url: null,
+  whatsapp_number: null,
   terms_url: null,
 };
 
@@ -45,7 +49,7 @@ export function useAppSettings() {
       const { data, error } = await supabase
         .from('app_settings')
         .select(
-          'shop_name, support_email, support_phone, shop_address_line, shop_city, shop_postal_code, cod_enabled, online_payment_enabled, privacy_url, terms_url',
+          'shop_name, support_email, support_phone, shop_address_line, shop_city, shop_postal_code, cod_enabled, online_payment_enabled, privacy_url, terms_url, instagram_url, whatsapp_number',
         )
         .maybeSingle<AppSettings>();
 
