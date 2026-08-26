@@ -8,11 +8,11 @@
     "scheme": "nexora",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "bundleIdentifier": "com.nexora.app",
+      "bundleIdentifier": "com.nexora.services.app",
       "supportsTablet": false
     },
     "android": {
-      "package": "com.nexora.app",
+      "package": "com.nexora.services.app",
       "adaptiveIcon": {
         "backgroundColor": "#0A1A20",
         "foregroundImage": "./assets/images/android-icon-foreground.png",

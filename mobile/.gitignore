@@ -43,3 +43,11 @@ example
 # generated native folders
 /ios
 /android
+
+# Google Play service account key for `eas submit`. A credential that can
+# publish releases to the Play Store — it must never enter git. The generic
+# *.json patterns above deliberately don't exist because app.json, eas.json
+# and tsconfig.json all need tracking, so name the shape of these keys.
+*-service-account*.json
+nexora-*-*.json
+google-play-*.json

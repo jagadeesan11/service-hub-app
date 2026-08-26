@@ -30,6 +30,30 @@ export function imagesFromUrls(urls: string[]): ServiceImage[] {
   });
 }
 
+/** The limits, in one sentence, for appending to anything that goes wrong. */
+const LIMITS = `Allowed: ${ACCEPTED_LABEL}, up to ${formatBytes(HARD_LIMIT_BYTES)} once uploaded, best at ${MAX_WIDTH}×${MAX_HEIGHT}.`;
+
+/**
+ * Turns a Storage failure into something with numbers in it.
+ *
+ * Storage answers "The object exceeded the maximum allowed size" and
+ * "invalid_mime_type" — accurate, and useless to whoever is holding the photo,
+ * because neither says what the maximum actually is.
+ *
+ * Matching on the wording is a guess about someone else's English, so an
+ * unrecognised message keeps its original text and gets the limits appended
+ * rather than being swallowed. Whatever happens, the allowed size is on screen.
+ */
+export function explainUploadError(fileName: string, raw: string): string {
+  if (/payload too large|exceeded the maximum|too large/i.test(raw)) {
+    return `${fileName} is over the ${formatBytes(HARD_LIMIT_BYTES)} limit for an uploaded image. ${LIMITS}`;
+  }
+  if (/mime type|invalid_mime|not supported/i.test(raw)) {
+    return `${fileName} is not an accepted image type. ${LIMITS}`;
+  }
+  return `${fileName} could not be uploaded: ${raw} ${LIMITS}`;
+}
+
 export function ServiceImageUploader({
   folderId,
   images,
@@ -75,15 +99,7 @@ export function ServiceImageUploader({
         .upload(path, prepared.file, { contentType: prepared.file.type });
 
       if (uploadError) {
-        // Storage answers "Payload too large" / "invalid_mime_type" with no
-        // numbers in it. The person uploading needs the figure, not the code.
-        const raw = uploadError.message;
-        const friendly = /payload too large|exceeded the maximum/i.test(raw)
-          ? `${original.name} was rejected: the server limit is ${formatBytes(HARD_LIMIT_BYTES)} per image.`
-          : /mime type|invalid_mime/i.test(raw)
-            ? `${original.name} was rejected: only ${ACCEPTED_LABEL} are allowed.`
-            : raw;
-        setError(friendly);
+        setError(explainUploadError(original.name, uploadError.message));
         continue;
       }
 
@@ -112,7 +128,7 @@ export function ServiceImageUploader({
     const { error: removeError } = await supabase.storage.from(BUCKET).remove([image.path]);
     if (removeError) {
       onChange(previous);
-      setError(removeError.message);
+      setError(`Could not remove that image: ${removeError.message}`);
     }
   }
 
