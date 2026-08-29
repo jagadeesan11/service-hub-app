@@ -68,6 +68,20 @@ export function PhoneIcon({ size = 20, color }: { size?: number; color: string }
   );
 }
 
+export function InstagramIcon({ size = 20, color }: { size?: number; color: string }) {
+  return (
+    <Glyph
+      size={size}
+      color={color}
+      d={[
+        'M7 3.5h10a3.5 3.5 0 0 1 3.5 3.5v10a3.5 3.5 0 0 1-3.5 3.5H7A3.5 3.5 0 0 1 3.5 17V7A3.5 3.5 0 0 1 7 3.5Z',
+        'M12 8.3a3.7 3.7 0 1 0 0 7.4 3.7 3.7 0 0 0 0-7.4Z',
+        'M16.8 7.2h.01',
+      ]}
+    />
+  );
+}
+
 export function HelpIcon({ size = 20, color }: { size?: number; color: string }) {
   return (
     <Glyph

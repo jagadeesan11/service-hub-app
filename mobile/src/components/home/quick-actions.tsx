@@ -1,12 +1,18 @@
 import { router } from 'expo-router';
-import { Linking, Pressable, StyleSheet, View } from 'react-native';
+import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
-import { CalendarIcon, ChatIcon, HelpIcon, PhoneIcon } from '@/components/home/action-icons';
+import {
+  CalendarIcon,
+  ChatIcon,
+  HelpIcon,
+  InstagramIcon,
+  PhoneIcon,
+} from '@/components/home/action-icons';
 import { ThemedText } from '@/components/themed-text';
 import { Radius, Spacing } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/use-app-settings';
 import { useTheme } from '@/hooks/use-theme';
-import { whatsappUrl } from '@/lib/social-links';
+import { instagramHandle, whatsappUrl } from '@/lib/social-links';
 
 type Action = {
   key: string;
@@ -15,19 +21,25 @@ type Action = {
   onPress: () => void;
 };
 
+const TILE_WIDTH = 84;
+
 /**
- * Three taps a customer reaches for most, above the catalogue.
+ * The taps a customer reaches for most, above the catalogue.
  *
  * Which contact channels appear depends on what the shop has configured, so
- * the row never offers a WhatsApp that goes nowhere. Capped at three: a fourth
- * makes each tile too narrow for its label on a 375px screen, and the value
- * here is that they are all reachable without thinking.
+ * the row never offers a WhatsApp — or an Instagram — that goes nowhere.
+ *
+ * A fixed-width row used to cap this at three, which silently dropped
+ * whichever channel lost the coin toss once WhatsApp, Call and Instagram were
+ * all configured at once. Scrolling horizontally instead means adding a
+ * channel is never a trade against another one.
  */
 export function QuickActions() {
   const theme = useTheme();
   const { settings } = useAppSettings();
 
   const whatsapp = whatsappUrl(settings.whatsapp_number);
+  const instagram = instagramHandle(settings.instagram_url);
 
   const actions: Action[] = [
     {
@@ -56,16 +68,30 @@ export function QuickActions() {
           },
         ]
       : []),
+    ...(instagram && settings.instagram_url
+      ? [
+          {
+            key: 'instagram',
+            label: instagram,
+            Icon: InstagramIcon,
+            onPress: () => Linking.openURL(settings.instagram_url!),
+          },
+        ]
+      : []),
     {
       key: 'help',
       label: 'Help',
       Icon: HelpIcon,
       onPress: () => router.push('/settings/help'),
     },
-  ].slice(0, 3);
+  ];
 
   return (
-    <View style={styles.row}>
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={styles.row}
+    >
       {actions.map(({ key, label, Icon, onPress }) => (
         <Pressable
           key={key}
@@ -89,7 +115,7 @@ export function QuickActions() {
           </ThemedText>
         </Pressable>
       ))}
-    </View>
+    </ScrollView>
   );
 }
 
@@ -101,7 +127,7 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.three,
   },
   tile: {
-    flex: 1,
+    width: TILE_WIDTH,
     alignItems: 'center',
     gap: Spacing.one,
     borderWidth: StyleSheet.hairlineWidth,
