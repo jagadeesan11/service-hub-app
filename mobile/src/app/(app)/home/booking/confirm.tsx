@@ -4,6 +4,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { BookingSteps } from '@/components/booking-steps';
+import { PromoCodeField } from '@/components/booking/promo-code-field';
 import { ThemedText } from '@/components/themed-text';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -13,6 +14,7 @@ import { Radius, Spacing } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
 import { useCreateBooking, useCustomerAsset } from '@/hooks/use-booking';
 import { useServiceDetail } from '@/hooks/use-catalog';
+import type { PromoValidation } from '@/hooks/use-promo';
 import { useTheme } from '@/hooks/use-theme';
 import { calculatePrice } from '@/lib/pricing';
 import { getBookableDays, getTimeSlotsForDay } from '@/lib/scheduling';
@@ -70,6 +72,13 @@ export default function BookingConfirmScreen() {
 
   const selectedAttributes = asset?.attributes ?? {};
   const total = service ? calculatePrice(service, selectedAttributes, selectedAddonIds) : 0;
+
+  const [promo, setPromo] = useState<PromoValidation | null>(null);
+  // The database returned this figure for this exact job; it is not recomputed
+  // here. create_booking will check the code again and price it again, so what
+  // is shown and what is charged come from the same place.
+  const discount = promo?.valid ? (promo.discount_amount ?? 0) : 0;
+  const payable = Math.max(total - discount, 0);
   const selectedAddons = service?.addons.filter((addon) => selectedAddonIds.includes(addon.id)) ?? [];
 
   const isLoading = isServiceLoading || (Boolean(assetId) && isAssetLoading);
@@ -83,12 +92,10 @@ export default function BookingConfirmScreen() {
 
     try {
       const booking = await createBooking.mutateAsync({
-        userId: user.id,
         serviceId: service.id,
         assetId: assetId ?? null,
         addonIds: selectedAddonIds,
         scheduledAt: selectedSlot,
-        totalPrice: total,
         contactName,
         contactPhone,
         serviceAddress: address,
@@ -96,11 +103,19 @@ export default function BookingConfirmScreen() {
         servicePostalCode: postalCode,
         needsPickup: needsPickup === '1',
         pickupNotes,
+        promoCode: promo?.valid ? promo.code : null,
       });
 
       router.replace({
         pathname: '/(app)/home/booking/payment',
-        params: { bookingId: booking.id, amount: String(total), serviceName: service.name },
+        // The price the database settled on, not the one shown a moment ago.
+        // They agree today, but if a price changed between loading this screen
+        // and confirming, the server's figure is the one being charged.
+        params: {
+          bookingId: booking.id,
+          amount: String(booking.net_price),
+          serviceName: service.name,
+        },
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Could not create the booking.');
@@ -176,6 +191,19 @@ export default function BookingConfirmScreen() {
             </View>
           )}
 
+          <View style={styles.promo}>
+            <PromoCodeField
+              serviceId={service.id}
+              assetId={assetId ?? null}
+              addonIds={selectedAddonIds}
+              applied={promo}
+              onApplied={(result) => {
+                setPromo(result);
+                if (error) setError(null);
+              }}
+            />
+          </View>
+
           <Card style={styles.summary}>
             <ThemedText type="smallBold">{service.name}</ThemedText>
 
@@ -219,9 +247,31 @@ export default function BookingConfirmScreen() {
                 </ThemedText>
               </View>
             ))}
+            {/* Only broken out when there is something to break out. Without a
+                code the summary stays a single Total, as before. */}
+            {discount > 0 && (
+              <>
+                <View style={styles.summaryRow}>
+                  <ThemedText themeColor="textSecondary" type="small">
+                    Subtotal
+                  </ThemedText>
+                  <ThemedText themeColor="textSecondary" type="small">
+                    {PRICE_FORMATTER.format(total)}
+                  </ThemedText>
+                </View>
+                <View style={styles.summaryRow}>
+                  <ThemedText themeColor="primary" type="small">
+                    {promo?.code}
+                  </ThemedText>
+                  <ThemedText themeColor="primary" type="small">
+                    − {PRICE_FORMATTER.format(discount)}
+                  </ThemedText>
+                </View>
+              </>
+            )}
             <View style={[styles.summaryRow, styles.summaryTotal]}>
               <ThemedText type="smallBold">Total</ThemedText>
-              <ThemedText type="price">{PRICE_FORMATTER.format(total)}</ThemedText>
+              <ThemedText type="price">{PRICE_FORMATTER.format(payable)}</ThemedText>
             </View>
           </Card>
 
@@ -272,6 +322,7 @@ const styles = StyleSheet.create({
     paddingVertical: Spacing.one,
     marginRight: Spacing.two,
   },
+  promo: { marginTop: Spacing.four },
   summary: { marginTop: Spacing.four, gap: Spacing.two },
   summaryRow: {
     flexDirection: 'row',

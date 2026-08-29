@@ -10,10 +10,13 @@ export default async function BookingsPage() {
     supabase
       .from('bookings')
       .select(
-        `id, scheduled_at, status, total_price, technician_id, addon_ids, created_at,
+        `id, scheduled_at, status, total_price, discount_amount, discount_reason, net_price,
+         promo_discount_amount, promo_codes(code),
+         technician_id, addon_ids, created_at,
          contact_name, contact_phone, service_address, service_city, service_postal_code,
          needs_pickup, pickup_notes, payment_method,
          invoices(number),
+         payments(status),
          services(id, name, category_id, duration_minutes),
          profiles:user_id(name, phone, email, address_line, city, postal_code),
          technicians(id, name, phone),

@@ -66,17 +66,23 @@ export function useCustomerAsset(assetId: string | undefined) {
   });
 }
 
+/**
+ * Creates a booking through the create_booking RPC.
+ *
+ * Not a direct insert any more: customers no longer hold INSERT on bookings.
+ * The price is computed in the database from the service, its pricing rules
+ * and the chosen add-ons, so neither the total nor the owning user is
+ * something this app can assert — it can only ask.
+ */
 export function useCreateBooking() {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async (input: {
-      userId: string;
       serviceId: string;
       assetId: string | null;
       addonIds: string[];
       scheduledAt: Date;
-      totalPrice: number;
       contactName?: string | null;
       contactPhone?: string | null;
       serviceAddress?: string | null;
@@ -84,30 +90,28 @@ export function useCreateBooking() {
       servicePostalCode?: string | null;
       needsPickup?: boolean;
       pickupNotes?: string | null;
+      /** Checked again server-side; an expired code fails the booking. */
+      promoCode?: string | null;
     }) => {
-      const { data, error } = await supabase
-        .from('bookings')
-        .insert({
-          user_id: input.userId,
-          service_id: input.serviceId,
-          asset_id: input.assetId,
-          addon_ids: input.addonIds,
-          scheduled_at: input.scheduledAt.toISOString(),
-          status: 'pending_payment',
-          total_price: input.totalPrice,
-          contact_name: input.contactName ?? null,
-          contact_phone: input.contactPhone ?? null,
-          service_address: input.serviceAddress ?? null,
-          service_city: input.serviceCity ?? null,
-          service_postal_code: input.servicePostalCode ?? null,
-          needs_pickup: input.needsPickup ?? false,
-          pickup_notes: input.pickupNotes || null,
-        })
-        .select('id')
-        .single();
+      // The function returns `public.bookings`, a composite type, so PostgREST
+      // answers with a single object — no .single() and no array to unwrap.
+      const { data, error } = await supabase.rpc('create_booking', {
+        p_service_id: input.serviceId,
+        p_scheduled_at: input.scheduledAt.toISOString(),
+        p_asset_id: input.assetId,
+        p_addon_ids: input.addonIds,
+        p_contact_name: input.contactName ?? null,
+        p_contact_phone: input.contactPhone ?? null,
+        p_service_address: input.serviceAddress ?? null,
+        p_service_city: input.serviceCity ?? null,
+        p_service_postal_code: input.servicePostalCode ?? null,
+        p_needs_pickup: input.needsPickup ?? false,
+        p_pickup_notes: input.pickupNotes || null,
+        p_promo_code: input.promoCode || null,
+      });
 
       if (error) throw error;
-      return data;
+      return data as BookingListItem;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['bookings'] });
@@ -120,6 +124,12 @@ export interface BookingListItem {
   scheduled_at: string;
   status: string;
   total_price: number;
+  discount_amount: number;
+  discount_reason: string | null;
+  promo_discount_amount: number;
+  promo_codes: { code: string } | null;
+  /** Generated: total_price - discount_amount - promo_discount_amount, floored at 0. */
+  net_price: number;
   services: { name: string } | null;
   technicians: { name: string } | null;
 }
@@ -138,7 +148,7 @@ export function useMyBookings(userId?: string) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('bookings')
-        .select('id, scheduled_at, status, total_price, services(name), technicians(name)')
+        .select('id, scheduled_at, status, total_price, discount_amount, discount_reason, promo_discount_amount, net_price, promo_codes(code), services(name), technicians(name)')
         .order('scheduled_at', { ascending: false })
         .returns<BookingListItem[]>();
 
@@ -163,7 +173,7 @@ export function useBooking(bookingId: string | undefined) {
       const { data, error } = await supabase
         .from('bookings')
         .select(
-          'id, created_at, scheduled_at, status, total_price, addon_ids, service_id, services(name, duration_minutes), technicians(name)',
+          'id, created_at, scheduled_at, status, total_price, discount_amount, discount_reason, promo_discount_amount, net_price, promo_codes(code), addon_ids, service_id, services(name, duration_minutes), technicians(name)',
         )
         .eq('id', bookingId!)
         .single()

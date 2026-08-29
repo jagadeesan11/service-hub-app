@@ -13,6 +13,7 @@ import { ErrorState, LoadingScreen } from '@/components/ui/feedback';
 import { Radius, Spacing } from '@/constants/theme';
 import { useAppSettings } from '@/hooks/use-app-settings';
 import { useAuth } from '@/hooks/use-auth';
+import { useBooking } from '@/hooks/use-booking';
 import {
   useChooseCashOnDelivery,
   useConfirmPayment,
@@ -84,6 +85,7 @@ export default function PaymentScreen() {
     amount: string;
     serviceName: string;
   }>();
+  const { data: booking } = useBooking(bookingId);
 
   const createOrder = useCreateRazorpayOrder();
   const confirmPayment = useConfirmPayment();
@@ -154,7 +156,12 @@ export default function PaymentScreen() {
     );
   }
 
-  const total = PRICE_FORMATTER.format(Number(amount));
+  // The route param is what the app calculated a moment ago; the booking row
+  // is what will actually be charged. They differ if the shop granted a
+  // discount between booking and payment, and Razorpay bills net_price — so
+  // showing the param would quote a price we are not about to take.
+  const payable = booking?.net_price ?? Number(amount);
+  const total = PRICE_FORMATTER.format(payable);
   const ctaLabel =
     selectedMethod === 'cod' ? `Confirm booking · ${total} in cash` : `Pay ${total}`;
 

@@ -116,7 +116,7 @@ function BookingCard({ booking }: { booking: BookingListItem }) {
         <ThemedText type="small" themeColor="textMuted">
           {booking.technicians?.name ? `Technician · ${booking.technicians.name}` : 'Not yet assigned'}
         </ThemedText>
-        <ThemedText type="price">{PRICE.format(booking.total_price)}</ThemedText>
+        <ThemedText type="price">{PRICE.format(booking.net_price)}</ThemedText>
       </View>
     </Card>
   );

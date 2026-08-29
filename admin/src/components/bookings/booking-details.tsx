@@ -1,3 +1,4 @@
+import { DiscountControl } from '@/components/bookings/discount-control';
 import { InvoiceView } from '@/components/bookings/invoice-view';
 import type { BookingListItem, PaymentMethod } from '@/types/database';
 
@@ -142,6 +143,13 @@ export function BookingDetails({
           label="Payment"
           value={PAYMENT_LABELS[booking.payment_method] ?? booking.payment_method}
         />
+      </section>
+
+      {/* Full width and above the bill, because it has to be set before the
+          job is completed — that is when the invoice is raised and the amount
+          is frozen. */}
+      <section className="sm:col-span-3">
+        <DiscountControl booking={booking} />
       </section>
 
       {booking.status === 'completed' && (

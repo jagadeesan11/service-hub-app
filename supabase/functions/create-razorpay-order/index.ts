@@ -39,7 +39,7 @@ export default {
 
     const { data: booking, error: bookingError } = await ctx.supabase
       .from("bookings")
-      .select("id, total_price, status")
+      .select("id, net_price, status")
       .eq("id", bookingId)
       .maybeSingle();
 
@@ -63,7 +63,7 @@ export default {
         Authorization: `Basic ${btoa(`${RAZORPAY_KEY_ID}:${RAZORPAY_KEY_SECRET}`)}`,
       },
       body: JSON.stringify({
-        amount: Math.round(Number(booking.total_price) * 100),
+        amount: Math.round(Number(booking.net_price) * 100),
         currency: "INR",
         receipt: booking.id,
       }),
@@ -81,7 +81,7 @@ export default {
 
     const { error: paymentError } = await ctx.supabase.from("payments").insert({
       booking_id: booking.id,
-      amount: booking.total_price,
+      amount: booking.net_price,
       status: "created",
       razorpay_order_id: order.id,
     });

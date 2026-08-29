@@ -137,6 +137,13 @@ export interface BookingListItem {
   scheduled_at: string;
   status: BookingStatus;
   total_price: number;
+  discount_amount: number;
+  discount_reason: string | null;
+  promo_discount_amount: number;
+  /** to-one on a plain FK: PostgREST returns an object, or null when no code. */
+  promo_codes: { code: string } | null;
+  /** Generated: total_price - discount_amount - promo_discount_amount. Read-only. */
+  net_price: number;
   technician_id: ID | null;
   addon_ids: ID[];
   created_at: string;
@@ -148,6 +155,8 @@ export interface BookingListItem {
   needs_pickup: boolean;
   pickup_notes: string | null;
   payment_method: PaymentMethod;
+  /** to-MANY: a booking can have several payment attempts, so this is an array. */
+  payments: { status: string }[] | null;
   /** to-one: booking_id is UNIQUE on invoices, so this is an object or null. */
   invoices: { number: string } | { number: string }[] | null;
   services: { id: ID; name: string; category_id: ID; duration_minutes: number | null } | null;

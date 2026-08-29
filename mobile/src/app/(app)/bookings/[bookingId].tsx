@@ -100,7 +100,31 @@ export default function BookingDetailScreen() {
             {booking.technicians?.name && (
               <SummaryRow label="Technician" value={booking.technicians.name} />
             )}
-            <SummaryRow label="Total paid" value={PRICE.format(booking.total_price)} emphasis />
+            {/* Both figures, and only when there is a discount: a customer who
+                was given money off should be able to see it was given, not
+                just a smaller number they cannot account for. */}
+            {booking.discount_amount + booking.promo_discount_amount > 0 && (
+              <>
+                <SummaryRow label="Service" value={PRICE.format(booking.total_price)} />
+                {booking.promo_discount_amount > 0 && (
+                  <SummaryRow
+                    label={
+                      booking.promo_codes?.code
+                        ? `Promo code ${booking.promo_codes.code}`
+                        : 'Promo code'
+                    }
+                    value={`− ${PRICE.format(booking.promo_discount_amount)}`}
+                  />
+                )}
+                {booking.discount_amount > 0 && (
+                  <SummaryRow
+                    label={booking.discount_reason || 'Discount'}
+                    value={`− ${PRICE.format(booking.discount_amount)}`}
+                  />
+                )}
+              </>
+            )}
+            <SummaryRow label="Total" value={PRICE.format(booking.net_price)} emphasis />
           </Card>
 
           {/* Only once the work is actually done, and only until they have

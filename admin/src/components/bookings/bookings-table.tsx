@@ -144,7 +144,8 @@ export function BookingsTable({
                       <span>{customer?.name ?? 'Unnamed customer'}</span>
                       <span>{DATE_FORMATTER.format(new Date(booking.scheduled_at))}</span>
                       <span className="tabular-nums">
-                        {PRICE_FORMATTER.format(booking.total_price)}
+                        {PRICE_FORMATTER.format(booking.net_price)}
+                        {booking.discount_amount + booking.promo_discount_amount > 0 ? ' after discount' : ''}
                       </span>
                     </div>
                   </TableCell>
@@ -194,7 +195,19 @@ export function BookingsTable({
                     )}
                   </TableCell>
                   <TableCell className="hidden text-right tabular-nums md:table-cell">
-                    {PRICE_FORMATTER.format(booking.total_price)}
+                    {/* When a discount is on the job, the gross is struck
+                        through rather than hidden — a dispatcher reconciling
+                        cash needs to see both numbers, not just the one owed. */}
+                    {booking.discount_amount + booking.promo_discount_amount > 0 ? (
+                      <div className="flex flex-col items-end leading-tight">
+                        <span className="text-xs text-muted-foreground line-through">
+                          {PRICE_FORMATTER.format(booking.total_price)}
+                        </span>
+                        <span>{PRICE_FORMATTER.format(booking.net_price)}</span>
+                      </div>
+                    ) : (
+                      PRICE_FORMATTER.format(booking.total_price)
+                    )}
                   </TableCell>
                   {/* Its own column, away from the workflow actions: a
                       destructive control should not sit in the same cluster as
