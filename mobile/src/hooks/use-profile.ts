@@ -4,6 +4,9 @@ import { supabase } from '@/lib/supabase';
 
 export type Gender = 'female' | 'male' | 'other' | 'undisclosed';
 
+/** Decides which app a signed-in person sees. Mirrors profiles.role. */
+export type UserRole = 'customer' | 'technician' | 'admin' | 'shop_owner';
+
 export interface Profile {
   id: string;
   name: string | null;
@@ -13,6 +16,7 @@ export interface Profile {
   city: string | null;
   postal_code: string | null;
   gender: Gender | null;
+  role: UserRole;
   onboarded_at: string | null;
 }
 
@@ -23,7 +27,7 @@ export function useProfile(userId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, name, phone, email, address_line, city, postal_code, gender, onboarded_at')
+        .select('id, name, phone, email, address_line, city, postal_code, gender, onboarded_at, role')
         .eq('id', userId!)
         .single();
 

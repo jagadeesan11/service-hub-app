@@ -13,6 +13,7 @@ import { ThemedView } from '@/components/themed-view';
 import { Radius, Spacing } from '@/constants/theme';
 import { useAuth } from '@/hooks/use-auth';
 import { useCreateBooking, useCustomerAsset } from '@/hooks/use-booking';
+import { useBusinessHours, useShopClosures } from '@/hooks/use-hours';
 import { useServiceDetail } from '@/hooks/use-catalog';
 import type { PromoValidation } from '@/hooks/use-promo';
 import { useTheme } from '@/hooks/use-theme';
@@ -63,12 +64,20 @@ export default function BookingConfirmScreen() {
   const { data: asset, isLoading: isAssetLoading } = useCustomerAsset(assetId);
   const createBooking = useCreateBooking();
 
-  const days = useMemo(() => getBookableDays(), []);
+  // The shop's real hours, so the picker cannot offer a slot create_booking
+  // will refuse. Both read the same rows.
+  const { data: hours } = useBusinessHours();
+  const { data: closures } = useShopClosures();
+
+  const days = useMemo(() => getBookableDays(new Date(), hours, closures), [hours, closures]);
   const [selectedDayIndex, setSelectedDayIndex] = useState(0);
   const [selectedSlot, setSelectedSlot] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const slots = useMemo(() => getTimeSlotsForDay(days[selectedDayIndex].date), [days, selectedDayIndex]);
+  const slots = useMemo(
+    () => getTimeSlotsForDay(days[selectedDayIndex].date, new Date(), hours, closures),
+    [days, selectedDayIndex, hours, closures],
+  );
 
   const selectedAttributes = asset?.attributes ?? {};
   const total = service ? calculatePrice(service, selectedAttributes, selectedAddonIds) : 0;
@@ -145,6 +154,12 @@ export default function BookingConfirmScreen() {
               return (
                 <Pressable
                   key={day.date.toISOString()}
+                  // Shown but not selectable when the shop is shut. A day that
+                  // silently is not there reads as a bug; "Sunday — closed"
+                  // tells the customer something.
+                  disabled={!day.open}
+                  accessibilityState={{ disabled: !day.open, selected: isSelected }}
+                  accessibilityLabel={day.open ? day.label : `${day.label}, closed`}
                   onPress={() => {
                     setSelectedDayIndex(index);
                     setSelectedSlot(null);
@@ -153,10 +168,15 @@ export default function BookingConfirmScreen() {
                     styles.chip,
                     { borderColor: theme.border },
                     isSelected && { backgroundColor: theme.primary, borderColor: theme.primary },
+                    !day.open && { opacity: 0.45 },
                   ]}
                 >
-                  <ThemedText type="small" themeColor={isSelected ? 'primaryText' : 'text'}>
+                  <ThemedText
+                    type="small"
+                    themeColor={isSelected ? 'primaryText' : day.open ? 'text' : 'textMuted'}
+                  >
                     {day.label}
+                    {day.open ? '' : ' · closed'}
                   </ThemedText>
                 </Pressable>
               );

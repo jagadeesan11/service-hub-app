@@ -18,6 +18,8 @@ export interface ReportRow {
   scheduled_at: string;
   status: BookingStatus;
   total_price: number;
+  /** What was actually earned: gross less any shop discount and promo code. */
+  net_price: number;
   payment_method: PaymentMethod;
   services: { name: string; categories: { name: string } | null } | null;
   technicians: { name: string } | null;

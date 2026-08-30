@@ -48,6 +48,9 @@ function RootNavigator() {
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         <Stack.Screen name="(app)" options={{ headerShown: false }} />
+        {/* The shop-side app. Which group the session actually lands in is
+            decided by role in app/index.tsx. */}
+        <Stack.Screen name="(owner)" options={{ headerShown: false }} />
         {/* Outside the (app) tab group: NativeTabs turns every child directory
             into a tab, so sub-screens must live here to push over the tab bar. */}
         <Stack.Screen name="settings" options={{ headerShown: false }} />

@@ -115,7 +115,9 @@ export function summarise(rows: ReportRow[]): Summary {
   // excluded so an abandoned checkout does not inflate the cancellation rate.
   const decided = revenueRows.length + cancelled;
 
-  const sum = (list: ReportRow[]) => list.reduce((a, r) => a + Number(r.total_price), 0);
+  // net_price, not total_price: a discounted job earned the discounted amount,
+  // and reporting the gross overstates every figure on the page.
+  const sum = (list: ReportRow[]) => list.reduce((a, r) => a + Number(r.net_price), 0);
 
   return {
     revenue: sum(revenueRows),
@@ -162,7 +164,7 @@ export function breakdownBy(
     const key = pick(row) ?? 'Unassigned';
     const entry = map.get(key) ?? { jobs: 0, revenue: 0, ratings: [] };
     entry.jobs += 1;
-    entry.revenue += Number(row.total_price);
+    entry.revenue += Number(row.net_price);
     const rating = ratingOf(row);
     if (rating !== null) entry.ratings.push(rating);
     map.set(key, entry);
@@ -194,7 +196,8 @@ const CSV_COLUMNS: { header: string; value: (r: ReportRow) => string | number }[
   { header: 'City', value: (r) => r.profiles?.city ?? '' },
   { header: 'Technician', value: (r) => r.technicians?.name ?? '' },
   { header: 'Payment method', value: (r) => r.payment_method },
-  { header: 'Amount', value: (r) => Number(r.total_price).toFixed(2) },
+  { header: 'Gross', value: (r) => Number(r.total_price).toFixed(2) },
+  { header: 'Amount', value: (r) => Number(r.net_price).toFixed(2) },
   { header: 'Bill number', value: (r) => one(r.invoices)?.number ?? '' },
   { header: 'Rating', value: (r) => ratingOf(r) ?? '' },
 ];

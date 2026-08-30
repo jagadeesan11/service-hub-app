@@ -8,7 +8,7 @@ export default async function ReportsPage() {
   const { data, error } = await supabase
     .from('bookings')
     .select(
-      `id, created_at, scheduled_at, status, total_price, payment_method,
+      `id, created_at, scheduled_at, status, total_price, net_price, payment_method,
        services(name, categories(name)),
        technicians(name),
        profiles(name, phone, city),

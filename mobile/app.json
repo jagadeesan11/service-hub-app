@@ -14,7 +14,7 @@
     "android": {
       "package": "com.nexora.services.app",
       "adaptiveIcon": {
-        "backgroundColor": "#0A1A20",
+        "backgroundColor": "#0A1040",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
@@ -30,9 +30,9 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#0A1A20",
+          "backgroundColor": "#0A1040",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 140
+          "imageWidth": 220
         }
       ],
       [
