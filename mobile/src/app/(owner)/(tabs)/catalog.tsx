@@ -1,3 +1,4 @@
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -147,8 +148,8 @@ export default function OwnerCatalogScreen() {
 
           <View style={styles.body}>
             <ThemedText type="caption" themeColor="textMuted">
-              Photos, descriptions, add-ons and code targeting are set on the web panel — they are
-              desk work, not shop-floor work.
+              Tap a service to edit its name, price, duration and description. Photos, add-ons and
+              code targeting stay on the web panel — they are desk work, not shop-floor work.
             </ThemedText>
           </View>
         </ScrollView>
@@ -207,20 +208,42 @@ function ServiceRow({
   onToggle: (next: boolean) => void;
 }) {
   return (
+    // The card is not pressable as a whole. Opening the service and switching
+    // it off are siblings, because nesting the switch inside a pressable makes
+    // the tap ambiguous on native and invalid HTML on web.
     <Card style={styles.row}>
-      <View style={styles.rowCopy}>
-        <ThemedText type="bodyMedium" numberOfLines={1}>
-          {service.name}
-        </ThemedText>
-        <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-          {serviceSummary(service)}
-        </ThemedText>
-        {service.rating_count > 0 && service.rating_avg !== null ? (
-          <ThemedText type="caption" themeColor="textMuted">
-            ★ {service.rating_avg.toFixed(1)} · {service.rating_count} reviews
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: '/(owner)/service/[serviceId]',
+            params: { serviceId: service.id },
+          })
+        }
+        accessibilityRole="button"
+        accessibilityLabel={`Open ${service.name}`}
+        // The whole strip up to the chevron, not just the words: a tap target
+        // the exact size of the text reads as decoration, and this row had no
+        // chevron either — so there was nothing to say it opened anything.
+        style={({ pressed }) => [styles.rowMain, { opacity: pressed ? 0.7 : 1 }]}
+      >
+        <View style={styles.rowCopy}>
+          <ThemedText type="bodyMedium" numberOfLines={1}>
+            {service.name}
           </ThemedText>
-        ) : null}
-      </View>
+          <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
+            {serviceSummary(service)}
+          </ThemedText>
+          {service.rating_count > 0 && service.rating_avg !== null ? (
+            <ThemedText type="caption" themeColor="textMuted">
+              ★ {service.rating_avg.toFixed(1)} · {service.rating_count} reviews
+            </ThemedText>
+          ) : null}
+        </View>
+
+        <ThemedText type="body" themeColor="textMuted">
+          ›
+        </ThemedText>
+      </Pressable>
 
       {/* The switch is the whole point of this row on a phone: something
           breaks, the service stops being bookable before the next customer
@@ -290,6 +313,7 @@ const styles = StyleSheet.create({
   stack: { paddingHorizontal: Spacing.four, gap: Spacing.two },
   row: { flexDirection: 'row', alignItems: 'center', gap: Spacing.three },
   rowCopy: { flex: 1, gap: 1 },
+  rowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   codeRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   code: { letterSpacing: 1 },
   badge: { borderRadius: Radius.full, paddingHorizontal: Spacing.two, paddingVertical: 1 },

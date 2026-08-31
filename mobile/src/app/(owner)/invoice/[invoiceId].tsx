@@ -2,6 +2,7 @@ import { Stack, useLocalSearchParams } from 'expo-router';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { DownloadBillButton } from '@/components/download-bill-button';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
@@ -137,6 +138,10 @@ export default function OwnerInvoiceScreen() {
               </ThemedText>
             </View>
           </Card>
+
+          <View style={styles.body}>
+            <DownloadBillButton invoice={invoice} />
+          </View>
 
           <View style={styles.body}>
             <ThemedText type="caption" themeColor="textMuted">

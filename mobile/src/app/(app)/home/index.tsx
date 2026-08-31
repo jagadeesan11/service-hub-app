@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ActiveBookingCard } from '@/components/home/active-booking-card';
 import { HomeHeader } from '@/components/home/home-header';
 import { QuickActions } from '@/components/home/quick-actions';
+import { ShopHoursCard } from '@/components/shop-hours-card';
 import { ServiceIcon } from '@/components/service-icon';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -61,6 +62,14 @@ export default function HomeScreen() {
             </View>
           }
           renderItem={({ item }) => <CategoryCard category={item} />}
+          // Below the catalogue: people come here to book, and opening hours
+          // are the thing they check second. It renders nothing until the
+          // hours load, so the list does not end on an empty box.
+          ListFooterComponent={
+            <View style={styles.footer}>
+              <ShopHoursCard />
+            </View>
+          }
         />
       </SafeAreaView>
     </ThemedView>
@@ -129,4 +138,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   cardBody: { flex: 1, gap: 1 },
+  footer: { paddingHorizontal: Spacing.four, paddingTop: Spacing.five },
 });

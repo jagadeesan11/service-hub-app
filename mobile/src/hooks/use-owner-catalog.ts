@@ -88,6 +88,48 @@ export function useToggleService() {
   });
 }
 
+/**
+ * Saving an edited service.
+ *
+ * Only the fields the phone screen offers. Photos, category and add-on
+ * structure are deliberately not writable here — sending columns the screen
+ * never showed is how an edit quietly undoes someone else's work.
+ */
+export function useUpdateService() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (input: {
+      id: string;
+      name: string;
+      description: string | null;
+      base_price: number;
+      duration_minutes: number | null;
+      is_active: boolean;
+    }) => {
+      const { id, ...patch } = input;
+
+      const { data, error } = await supabase
+        .from('services')
+        .update(patch)
+        .eq('id', id)
+        .select('id');
+
+      if (error) throw error;
+      // PostgREST answers 204 for a write that matched nothing, which reads as
+      // success; the returned rows are what prove it landed.
+      if (!data || data.length === 0) throw new Error('That service no longer exists.');
+      return data[0];
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['owner'] });
+      // The customer app reads the same catalogue.
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
+      queryClient.invalidateQueries({ queryKey: ['services'] });
+    },
+  });
+}
+
 /** Changing what a tier costs. Prices move; the rest of a service rarely does. */
 export function useUpdateTierPrice() {
   const queryClient = useQueryClient();

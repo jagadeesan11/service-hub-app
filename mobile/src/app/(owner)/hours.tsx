@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Pressable, RefreshControl, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+import { TimePickerSheet } from '@/components/owner/time-picker-sheet';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Card } from '@/components/ui/card';
@@ -14,29 +15,29 @@ import {
   useShopClosures,
   useUpdateHours,
 } from '@/hooks/use-hours';
-import type { BusinessHours } from '@/lib/scheduling';
+import { useTheme } from '@/hooks/use-theme';
+import { formatClock, type BusinessHours } from '@/lib/scheduling';
 
 const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-/** Stepped rather than free-typed: a shop opens on the half hour, and a
- *  time keyboard on a phone is a worse way to say "nine o'clock". */
-const OPEN_TIMES = ['07:00', '07:30', '08:00', '08:30', '09:00', '09:30', '10:00', '11:00'];
-const CLOSE_TIMES = ['14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00', '21:00'];
-
-function pretty(time: string): string {
-  const [h, m] = time.split(':').map(Number);
-  const suffix = h >= 12 ? 'pm' : 'am';
-  const hour = h % 12 === 0 ? 12 : h % 12;
-  return `${hour}:${String(m).padStart(2, '0')} ${suffix}`;
+/** Chosen from a list, not typed: a shop opens on the half hour, and a time
+ *  keyboard on a phone is a worse way to say "nine o'clock". */
+function halfHours(fromHour: number, toHour: number): string[] {
+  const out: string[] = [];
+  for (let m = fromHour * 60; m <= toHour * 60; m += 30) {
+    out.push(`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
+  }
+  return out;
 }
 
-function nextIn(list: string[], current: string): string {
-  const at = list.indexOf(current.slice(0, 5));
-  return list[(at + 1) % list.length];
-}
+const OPEN_TIMES = halfHours(6, 12);
+const CLOSE_TIMES = halfHours(12, 22);
 
 export default function OwnerHoursScreen() {
   const [problem, setProblem] = useState<string | null>(null);
+  const [picking, setPicking] = useState<{ weekday: number; edge: 'opens' | 'closes' } | null>(
+    null,
+  );
   const hours = useBusinessHours();
   const closures = useShopClosures();
   const updateHours = useUpdateHours();
@@ -110,22 +111,8 @@ export default function OwnerHoursScreen() {
                   onToggle={(open) =>
                     void run(() => updateHours.mutateAsync({ weekday: h.weekday, is_open: open }))
                   }
-                  onCycleOpen={() =>
-                    void run(() =>
-                      updateHours.mutateAsync({
-                        weekday: h.weekday,
-                        opens_at: nextIn(OPEN_TIMES, h.opens_at),
-                      }),
-                    )
-                  }
-                  onCycleClose={() =>
-                    void run(() =>
-                      updateHours.mutateAsync({
-                        weekday: h.weekday,
-                        closes_at: nextIn(CLOSE_TIMES, h.closes_at),
-                      }),
-                    )
-                  }
+                  onEditOpen={() => setPicking({ weekday: h.weekday, edge: 'opens' })}
+                  onEditClose={() => setPicking({ weekday: h.weekday, edge: 'closes' })}
                 />
               ))}
             </View>
@@ -201,11 +188,32 @@ export default function OwnerHoursScreen() {
 
           <View style={styles.body}>
             <ThemedText type="caption" themeColor="textMuted">
-              Tap a time to step it. These hours are checked again when a booking is made, so a slot
+              Tap a time to change it — it saves straight away. These hours are checked again when a
+              booking is made, so a slot
               outside them is refused even if an old app version offers it.
             </ThemedText>
           </View>
         </ScrollView>
+
+        {picking && (
+          <TimePickerSheet
+            visible
+            title={`${DAY_NAMES[picking.weekday]} ${picking.edge === 'opens' ? 'opening' : 'closing'} time`}
+            times={picking.edge === 'opens' ? OPEN_TIMES : CLOSE_TIMES}
+            selected={
+              (hours.data ?? []).find((h) => h.weekday === picking.weekday)?.[
+                picking.edge === 'opens' ? 'opens_at' : 'closes_at'
+              ] ?? ''
+            }
+            onClose={() => setPicking(null)}
+            onPick={(time) => {
+              const patch =
+                picking.edge === 'opens' ? { opens_at: time } : { closes_at: time };
+              setPicking(null);
+              void run(() => updateHours.mutateAsync({ weekday: picking.weekday, ...patch }));
+            }}
+          />
+        )}
       </SafeAreaView>
     </ThemedView>
   );
@@ -215,15 +223,24 @@ function DayRow({
   hours,
   busy,
   onToggle,
-  onCycleOpen,
-  onCycleClose,
+  onEditOpen,
+  onEditClose,
 }: {
   hours: BusinessHours;
   busy?: boolean;
   onToggle: (open: boolean) => void;
-  onCycleOpen: () => void;
-  onCycleClose: () => void;
+  onEditOpen: () => void;
+  onEditClose: () => void;
 }) {
+  const theme = useTheme();
+
+  // The times are drawn as fields rather than plain text, so it is obvious
+  // they can be changed without having to tap one to find out.
+  const chip = ({ pressed }: { pressed: boolean }) => [
+    styles.timeChip,
+    { borderColor: theme.border, opacity: pressed ? 0.7 : 1 },
+  ];
+
   return (
     <Card style={styles.row}>
       <ThemedText
@@ -236,17 +253,29 @@ function DayRow({
 
       {hours.is_open ? (
         <View style={styles.times}>
-          <Pressable onPress={onCycleOpen} disabled={busy} accessibilityRole="button" hitSlop={6}>
+          <Pressable
+            onPress={onEditOpen}
+            disabled={busy}
+            accessibilityRole="button"
+            accessibilityLabel={`Opens at ${formatClock(hours.opens_at)}. Change.`}
+            style={chip}
+          >
             <ThemedText type="small" themeColor="primary">
-              {pretty(hours.opens_at)}
+              {formatClock(hours.opens_at)}
             </ThemedText>
           </Pressable>
           <ThemedText type="small" themeColor="textMuted">
             –
           </ThemedText>
-          <Pressable onPress={onCycleClose} disabled={busy} accessibilityRole="button" hitSlop={6}>
+          <Pressable
+            onPress={onEditClose}
+            disabled={busy}
+            accessibilityRole="button"
+            accessibilityLabel={`Closes at ${formatClock(hours.closes_at)}. Change.`}
+            style={chip}
+          >
             <ThemedText type="small" themeColor="primary">
-              {pretty(hours.closes_at)}
+              {formatClock(hours.closes_at)}
             </ThemedText>
           </Pressable>
         </View>
@@ -279,6 +308,12 @@ const styles = StyleSheet.create({
   rowCopy: { flex: 1, gap: 1 },
   times: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: Spacing.two },
   chips: { paddingHorizontal: Spacing.four, gap: Spacing.two },
+  timeChip: {
+    borderWidth: StyleSheet.hairlineWidth,
+    borderRadius: Radius.sm,
+    paddingHorizontal: Spacing.two,
+    paddingVertical: Spacing.one,
+  },
   chip: {
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: '#DFE5EB',

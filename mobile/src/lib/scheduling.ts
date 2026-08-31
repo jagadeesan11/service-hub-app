@@ -116,3 +116,99 @@ export function getTimeSlotsForDay(
   }
   return slots;
 }
+
+/**
+ * "09:00" as "9:00 am". Times are stored as clock strings, not dates.
+ *
+ * The shape is checked rather than just parsed: Number('') is 0, so a missing
+ * time would otherwise render as a confident "12:00 am" and a shop with no
+ * hours set would advertise midnight to midnight.
+ */
+export function formatClock(time: string): string {
+  const match = /^(\d{1,2}):(\d{2})/.exec(String(time ?? ''));
+  if (!match) return '';
+
+  const h = Number(match[1]);
+  const m = Number(match[2]);
+  if (h > 23 || m > 59) return '';
+
+  const suffix = h >= 12 ? 'pm' : 'am';
+  const hour = h % 12 === 0 ? 12 : h % 12;
+  return `${hour}:${String(m).padStart(2, '0')} ${suffix}`;
+}
+
+export const WEEKDAY_NAMES = [
+  'Sunday',
+  'Monday',
+  'Tuesday',
+  'Wednesday',
+  'Thursday',
+  'Friday',
+  'Saturday',
+];
+
+export interface ScheduleLine {
+  /** 0 = Sunday, matching getDay() and Postgres's extract(dow). */
+  weekday: number;
+  day: string;
+  /** "9:00 am – 7:00 pm", or "Closed". */
+  hours: string;
+  isToday: boolean;
+}
+
+/**
+ * The week as a customer reads it.
+ *
+ * Ordered from today rather than from Sunday: someone checking opening hours
+ * is nearly always asking about today or tomorrow, and making them find the
+ * current day in a fixed list is work the screen can do for them.
+ */
+export function weekSchedule(hours: BusinessHours[] | undefined, now: Date = new Date()): ScheduleLine[] {
+  const today = now.getDay();
+  if (!hours || hours.length === 0) return [];
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const weekday = (today + i) % 7;
+    const h = hours.find((row) => row.weekday === weekday);
+    return {
+      weekday,
+      day: WEEKDAY_NAMES[weekday],
+      hours:
+        h && h.is_open ? `${formatClock(h.opens_at)} – ${formatClock(h.closes_at)}` : 'Closed',
+      isToday: i === 0,
+    };
+  });
+}
+
+export interface OpenStatus {
+  open: boolean;
+  /** One line, ready to print. */
+  text: string;
+}
+
+/**
+ * Whether the shop is open right now, and the sentence that says so.
+ *
+ * A blocked day beats the weekly pattern, the same way it does when booking —
+ * this is the same question the picker asks, so it has to give the same answer.
+ */
+export function openStatus(
+  hours: BusinessHours[] | undefined,
+  closures: ShopClosure[] | undefined,
+  now: Date = new Date(),
+): OpenStatus {
+  if (!hours || hours.length === 0) return { open: false, text: 'Hours not set' };
+
+  if (isClosedOn(now, closures)) return { open: false, text: 'Closed today' };
+
+  const h = hoursFor(now, hours);
+  if (!h || !h.is_open) return { open: false, text: 'Closed today' };
+
+  const minutes = now.getHours() * 60 + now.getMinutes();
+  const opens = minutesOf(h.opens_at);
+  const closes = minutesOf(h.closes_at);
+
+  if (minutes < opens) return { open: false, text: `Opens at ${formatClock(h.opens_at)}` };
+  if (minutes >= closes) return { open: false, text: 'Closed for today' };
+  return { open: true, text: `Open until ${formatClock(h.closes_at)}` };
+}

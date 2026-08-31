@@ -12,6 +12,7 @@ import { supabase } from '@/lib/supabase';
  */
 export interface OwnerBooking {
   id: string;
+  created_at: string;
   scheduled_at: string;
   status: string;
   total_price: number;
@@ -29,14 +30,38 @@ export interface OwnerBooking {
   technicians: { id: string; name: string; phone: string | null } | null;
   profiles: { name: string | null; phone: string | null } | null;
   customer_assets: { attributes: Record<string, string> } | null;
-  payments: { status: string }[] | null;
+  payments:
+    | {
+        status: string;
+        created_at: string | null;
+        // When a payment reached its current status. For a paid row this is the
+        // moment the money actually landed; created_at is only when the order
+        // was opened, which on a card payment is a minute earlier.
+        updated_at: string | null;
+        razorpay_order_id: string | null;
+      }[]
+    | null;
+  /** Only populated by useOwnerBooking; the board query leaves it out. */
+  booking_events?:
+    | { event: string; created_at: string; technicians: { name: string } | null }[]
+    | null;
 }
 
 const BOOKING_FIELDS =
-  'id, scheduled_at, status, total_price, discount_amount, promo_discount_amount, net_price, ' +
+  'id, created_at, scheduled_at, status, total_price, discount_amount, promo_discount_amount, net_price, ' +
   'payment_method, technician_id, needs_pickup, contact_name, contact_phone, service_address, service_city, ' +
   'services(id, name, duration_minutes), technicians(id, name, phone), ' +
-  'profiles:user_id(name, phone), customer_assets:asset_id(attributes), payments(status)';
+  'profiles:user_id(name, phone), customer_assets:asset_id(attributes), ' +
+  'payments(status, created_at, updated_at, razorpay_order_id)';
+
+/**
+ * The detail screen also pulls the job's history, for the activity timeline.
+ *
+ * Deliberately not in BOOKING_FIELDS: that query returns the whole board, and
+ * a timeline is only ever read one job at a time. Embedding it there would
+ * multiply every board refetch by however many events each job has collected.
+ */
+const BOOKING_DETAIL_FIELDS = `${BOOKING_FIELDS}, booking_events(event, created_at, technicians(name))`;
 
 export function useOwnerBookings() {
   return useQuery({
@@ -178,7 +203,7 @@ export function useOwnerBooking(bookingId: string | undefined) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('bookings')
-        .select(BOOKING_FIELDS)
+        .select(BOOKING_DETAIL_FIELDS)
         .eq('id', bookingId!)
         .single()
         .returns<OwnerBooking>();

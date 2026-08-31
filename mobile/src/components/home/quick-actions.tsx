@@ -2,7 +2,6 @@ import { router } from 'expo-router';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 
 import {
-  CalendarIcon,
   ChatIcon,
   HelpIcon,
   InstagramIcon,
@@ -41,13 +40,9 @@ export function QuickActions() {
   const whatsapp = whatsappUrl(settings.whatsapp_number);
   const instagram = instagramHandle(settings.instagram_url);
 
+  // No "My bookings" tile: Bookings is already one of the three tabs along the
+  // bottom, and a shortcut to a tab teaches people the tab is somewhere else.
   const actions: Action[] = [
-    {
-      key: 'bookings',
-      label: 'My bookings',
-      Icon: CalendarIcon,
-      onPress: () => router.push('/(app)/bookings'),
-    },
     ...(whatsapp
       ? [
           {

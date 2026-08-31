@@ -1,7 +1,11 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 
-const PUBLIC_PATHS = ['/login'];
+// `/legal` holds the privacy policy and terms. These have to be reachable
+// without an account: Google Play fetches the privacy policy URL itself during
+// review, and a customer reading the terms before signing up has no session by
+// definition. They are static documents with nothing to protect.
+const PUBLIC_PATHS = ['/login', '/legal'];
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });

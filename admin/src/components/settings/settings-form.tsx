@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
+import { ShopLogoField } from '@/components/settings/shop-logo-field';
 import { createClient } from '@/lib/supabase/client';
 import type { AppSettings } from '@/types/database';
 
@@ -14,6 +15,7 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
   const router = useRouter();
 
   const [shopName, setShopName] = useState(settings.shop_name);
+  const [logoUrl, setLogoUrl] = useState<string | null>(settings.shop_logo_url ?? null);
   const [supportEmail, setSupportEmail] = useState(settings.support_email ?? '');
   const [supportPhone, setSupportPhone] = useState(settings.support_phone ?? '');
   const [addressLine, setAddressLine] = useState(settings.shop_address_line ?? '');
@@ -41,6 +43,7 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
       .from('app_settings')
       .update({
         shop_name: shopName,
+        shop_logo_url: logoUrl,
         support_email: supportEmail || null,
         support_phone: supportPhone || null,
         shop_address_line: addressLine || null,
@@ -93,6 +96,8 @@ export function SettingsForm({ settings }: { settings: AppSettings }) {
             onChange={(e) => setShopName(e.target.value)}
           />
         </div>
+
+        <ShopLogoField value={logoUrl} onChange={setLogoUrl} />
       </section>
 
       <section className="space-y-4">

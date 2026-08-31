@@ -82,36 +82,33 @@ export default function OwnerFeedbackScreen() {
           ) : (
             <>
               <View style={styles.body}>
+                {/* Score on the left, what to do about it on the right. The
+                    average alone is a vanity number; the pairing makes the card
+                    say "3.4, and two people are waiting on you". */}
                 <Card style={styles.summary}>
-                  <View style={styles.summaryRow}>
-                    <View>
-                      <ThemedText type="caption" themeColor="textMuted">
-                        Average
-                      </ThemedText>
-                      {/* No reviews is not a bad score — the dash says so
-                          rather than claiming 0.0 stars. */}
-                      <ThemedText type="price">
-                        {summary.average === null ? '—' : summary.average.toFixed(1)}
-                      </ThemedText>
-                    </View>
-                    <View style={styles.summaryRight}>
-                      <ThemedText type="body" themeColor="warning">
-                        {summary.average === null ? '☆☆☆☆☆' : starsOf(summary.average)}
-                      </ThemedText>
-                      <ThemedText type="caption" themeColor="textMuted">
-                        {summary.count} {summary.count === 1 ? 'review' : 'reviews'}
-                      </ThemedText>
-                    </View>
+                  <View style={styles.score}>
+                    {/* No reviews is not a bad score — the dash says so rather
+                        than claiming 0.0 stars. */}
+                    <ThemedText type="display">
+                      {summary.average === null ? '—' : summary.average.toFixed(1)}
+                    </ThemedText>
+                    <ThemedText type="caption" themeColor="textMuted">
+                      {summary.count} {summary.count === 1 ? 'review' : 'reviews'}
+                    </ThemedText>
                   </View>
 
-                  <ThemedText
-                    type="small"
-                    themeColor={summary.owing > 0 ? 'error' : 'success'}
-                  >
-                    {summary.owing > 0
-                      ? `${summary.owing} low rating${summary.owing > 1 ? 's need' : ' needs'} a reply`
-                      : 'Everything answered'}
-                  </ThemedText>
+                  <View style={[styles.summaryDivider, { backgroundColor: theme.border }]} />
+
+                  <View style={styles.summaryRight}>
+                    <ThemedText type="body" themeColor="warning">
+                      {summary.average === null ? '☆☆☆☆☆' : starsOf(summary.average)}
+                    </ThemedText>
+                    <ThemedText type="small" themeColor={summary.owing > 0 ? 'error' : 'success'}>
+                      {summary.owing > 0
+                        ? `${summary.owing} low rating${summary.owing > 1 ? 's need' : ' needs'} a reply`
+                        : 'Everything answered'}
+                    </ThemedText>
+                  </View>
                 </Card>
               </View>
 
@@ -247,8 +244,8 @@ function ReviewCard({
       ) : null}
 
       {review.tags.length > 0 && (
-        <ThemedText type="caption" themeColor="textMuted">
-          {review.tags.join(' · ')}
+        <ThemedText type="label" themeColor="textMuted">
+          {review.tags.join(' · ').toUpperCase()}
         </ThemedText>
       )}
 
@@ -262,26 +259,53 @@ function ReviewCard({
           </ThemedText>
         </View>
       ) : (
+        // Buttons rather than text links. An unanswered bad review is the one
+        // thing on this screen with an action attached, and Reply carries the
+        // weight so the other two read as alternatives to it.
         <View style={styles.actions}>
-          <Pressable onPress={onReply} accessibilityRole="button" hitSlop={6}>
-            <ThemedText type="smallBold" themeColor="primary">
+          <Pressable
+            onPress={onReply}
+            accessibilityRole="button"
+            accessibilityLabel={`Reply to ${customer}`}
+            style={({ pressed }) => [
+              styles.action,
+              styles.actionPrimary,
+              { backgroundColor: theme.primary },
+              pressed && { opacity: 0.85 },
+            ]}
+          >
+            <ThemedText type="smallBold" style={{ color: theme.primaryText }}>
               Reply
             </ThemedText>
           </Pressable>
+
           {phone ? (
             <Pressable
               onPress={() => Linking.openURL(`tel:${phone.replace(/\s/g, '')}`)}
               accessibilityRole="button"
               accessibilityLabel={`Call ${customer}`}
-              hitSlop={6}
+              style={({ pressed }) => [
+                styles.action,
+                { borderColor: theme.border, borderWidth: StyleSheet.hairlineWidth },
+                pressed && { opacity: 0.7 },
+              ]}
             >
-              <ThemedText type="smallBold" themeColor="primary">
-                Call
-              </ThemedText>
+              <ThemedText type="smallBold">Call</ThemedText>
             </Pressable>
           ) : null}
-          <Pressable onPress={onHide} accessibilityRole="button" disabled={busy} hitSlop={6}>
-            <ThemedText type="smallBold" themeColor="textMuted">
+
+          <Pressable
+            onPress={onHide}
+            accessibilityRole="button"
+            accessibilityLabel="Hide this review"
+            disabled={busy}
+            style={({ pressed }) => [
+              styles.action,
+              { borderColor: theme.border, borderWidth: StyleSheet.hairlineWidth },
+              pressed && { opacity: 0.7 },
+            ]}
+          >
+            <ThemedText type="smallBold" themeColor="textSecondary">
               Hide
             </ThemedText>
           </Pressable>
@@ -297,9 +321,10 @@ const styles = StyleSheet.create({
   scroll: { paddingBottom: Spacing.six },
   header: { paddingHorizontal: Spacing.four, paddingTop: Spacing.three },
   body: { paddingHorizontal: Spacing.four, paddingTop: Spacing.three },
-  summary: { gap: Spacing.two },
-  summaryRow: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-  summaryRight: { alignItems: 'flex-end' },
+  summary: { flexDirection: 'row', alignItems: 'center', gap: Spacing.three },
+  score: { alignItems: 'flex-start' },
+  summaryDivider: { width: StyleSheet.hairlineWidth, alignSelf: 'stretch', marginVertical: 2 },
+  summaryRight: { flex: 1, gap: 2 },
   filters: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -318,5 +343,14 @@ const styles = StyleSheet.create({
   cardHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   comment: { marginTop: 2 },
   reply: { borderRadius: Radius.md, padding: Spacing.two, gap: 1, marginTop: Spacing.one },
-  actions: { flexDirection: 'row', gap: Spacing.four, marginTop: Spacing.one },
+  actions: { flexDirection: 'row', gap: Spacing.two, marginTop: Spacing.two },
+  action: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: Radius.sm,
+    paddingVertical: Spacing.three,
+  },
+  // Reply is the job; it gets twice the room of the two ways out of it.
+  actionPrimary: { flex: 2 },
 });

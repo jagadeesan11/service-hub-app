@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 
 export interface AppSettings {
   shop_name: string;
+  shop_logo_url: string | null;
   support_email: string | null;
   support_phone: string | null;
   shop_address_line: string | null;
@@ -22,6 +23,7 @@ export interface AppSettings {
  *  render a shop name and a way to reach support offline. */
 export const FALLBACK_SETTINGS: AppSettings = {
   shop_name: 'Nexora',
+  shop_logo_url: null,
   support_email: SUPPORT_EMAIL,
   support_phone: SUPPORT_PHONE,
   shop_address_line: null,
@@ -49,7 +51,7 @@ export function useAppSettings() {
       const { data, error } = await supabase
         .from('app_settings')
         .select(
-          'shop_name, support_email, support_phone, shop_address_line, shop_city, shop_postal_code, cod_enabled, online_payment_enabled, privacy_url, terms_url, instagram_url, whatsapp_number',
+          'shop_name, shop_logo_url, support_email, support_phone, shop_address_line, shop_city, shop_postal_code, cod_enabled, online_payment_enabled, privacy_url, terms_url, instagram_url, whatsapp_number',
         )
         .maybeSingle<AppSettings>();
 

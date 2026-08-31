@@ -17,7 +17,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
  * theme toggle and sign-out that otherwise live in the sidebar footer — so
  * nothing reachable on desktop is missing on a phone.
  */
-export function MobileNav({ email }: { email?: string }) {
+export function MobileNav({ email, role }: { email?: string; role?: string | null }) {
   const [open, setOpen] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
 
@@ -101,7 +101,7 @@ export function MobileNav({ email }: { email?: string }) {
             </div>
 
             <div className="flex-1 overflow-y-auto px-3">
-              <SidebarNav onNavigate={() => setOpen(false)} />
+              <SidebarNav role={role} onNavigate={() => setOpen(false)} />
             </div>
 
             <div className="flex flex-col gap-3 border-t border-sidebar-border p-3">

@@ -99,6 +99,7 @@ export interface Technician {
 export interface AppSettings {
   id: boolean;
   shop_name: string;
+  shop_logo_url: string | null;
   support_email: string | null;
   support_phone: string | null;
   shop_address_line: string | null;

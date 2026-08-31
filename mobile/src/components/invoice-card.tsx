@@ -1,5 +1,6 @@
 import { StyleSheet, View } from 'react-native';
 
+import { DownloadBillButton } from '@/components/download-bill-button';
 import { ThemedText } from '@/components/themed-text';
 import { Card } from '@/components/ui/card';
 import { Spacing } from '@/constants/theme';
@@ -84,6 +85,9 @@ export function InvoiceCard({ bookingId }: { bookingId: string }) {
         <ThemedText type="caption" themeColor="textMuted">
           Not registered for GST. No tax has been charged.
         </ThemedText>
+
+        <View style={[styles.divider, { backgroundColor: theme.border }]} />
+        <DownloadBillButton invoice={invoice} variant="link" />
       </Card>
     </View>
   );

@@ -18,6 +18,12 @@ import { usePathname } from 'next/navigation';
 
 import { cn } from '@/lib/utils';
 
+// `adminOnly` marks the two areas that run the business rather than the shop:
+// who has an account, and how the whole product is configured. Everyone else
+// on the shop side gets the day-to-day screens.
+//
+// This only hides the link. The segment layouts under /users and /settings do
+// the actual gating, because a hidden link is still a working URL.
 const NAV_ITEMS = [
   { href: '/', label: 'Dashboard', Icon: LayoutGrid },
   { href: '/categories', label: 'Categories', Icon: Layers },
@@ -28,19 +34,28 @@ const NAV_ITEMS = [
   { href: '/feedback', label: 'Feedback', Icon: Star },
   { href: '/support', label: 'Help requests', Icon: LifeBuoy },
   { href: '/reports', label: 'Reports', Icon: ChartColumn },
-  { href: '/users', label: 'Users', Icon: Shield },
-  { href: '/settings', label: 'Settings', Icon: Settings },
+  { href: '/users', label: 'Users', Icon: Shield, adminOnly: true },
+  { href: '/settings', label: 'Settings', Icon: Settings, adminOnly: true },
 ];
 
 // `onNavigate` lets the mobile drawer close itself when a link is tapped.
 // Reacting to a pathname change in an effect also works, but sets state
 // during commit and cascades an extra render.
-export function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
+export function SidebarNav({
+  role,
+  onNavigate,
+}: {
+  role?: string | null;
+  onNavigate?: () => void;
+}) {
   const pathname = usePathname();
+  // Unknown role sees the restricted set. Failing closed matters here: if the
+  // profile lookup ever comes back empty, the safe reading is "not an admin".
+  const items = NAV_ITEMS.filter((item) => !item.adminOnly || role === 'admin');
 
   return (
     <nav className="flex flex-col gap-0.5">
-      {NAV_ITEMS.map(({ href, label, Icon }) => {
+      {items.map(({ href, label, Icon }) => {
         const isActive = href === '/' ? pathname === '/' : pathname.startsWith(href);
         return (
           <Link

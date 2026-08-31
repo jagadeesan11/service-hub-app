@@ -18,6 +18,13 @@ export interface ActionResult {
  * invoke it. The service-role client below bypasses RLS entirely, so every
  * action re-checks the caller here rather than trusting that they got as far
  * as rendering the page.
+ *
+ * `admin` only, deliberately narrower than the database's `is_admin()`, which
+ * also counts shop owners. These actions create accounts, delete them and
+ * reset passwords using the service key — so accepting a shop owner here would
+ * have let one mint an admin account or take over an existing one, whatever
+ * RLS says. Managing who has an account is running the business, not running
+ * the shop.
  */
 async function requireAdmin() {
   const supabase = await createClient();
@@ -32,7 +39,7 @@ async function requireAdmin() {
     .eq('id', user.id)
     .maybeSingle<{ role: UserRole }>();
 
-  if (profile?.role !== 'admin' && profile?.role !== 'shop_owner') return null;
+  if (profile?.role !== 'admin') return null;
   // The caller's own client is returned as well, because some writes have to
   // be made AS them rather than with the service key — see updateUser.
   return { id: user.id, supabase };
@@ -99,7 +106,10 @@ export async function updateUser(formData: FormData): Promise<ActionResult> {
   const phone = String(formData.get('phone') ?? '').trim();
 
   if (!id || !ROLES.includes(role)) return { ok: false, message: 'Unknown user or role.' };
-  if (id === caller.id && role !== 'admin' && role !== 'shop_owner') {
+  // Must stay `admin` exactly, not merely shop-side. Users is now admin-only,
+  // so demoting yourself to shop_owner would lock you out of the one screen
+  // that could put it back — and if you were the last admin, lock everyone out.
+  if (id === caller.id && role !== 'admin') {
     return { ok: false, message: 'You cannot remove your own admin access.' };
   }
 

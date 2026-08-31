@@ -46,7 +46,8 @@
         {
           "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID to protect your saved session."
         }
-      ]
+      ],
+      "expo-sharing"
     ],
     "experiments": {
       "typedRoutes": true,
